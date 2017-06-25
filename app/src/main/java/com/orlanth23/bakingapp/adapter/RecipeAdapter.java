@@ -2,8 +2,6 @@ package com.orlanth23.bakingapp.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,9 +9,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.orlanth23.bakingapp.R;
+import com.orlanth23.bakingapp.RecipeDetailActivity;
+import com.orlanth23.bakingapp.RecipeDetailFragment;
 import com.orlanth23.bakingapp.domain.Recipe;
-import com.orlanth23.bakingapp.recipeDetailActivity;
-import com.orlanth23.bakingapp.recipeDetailFragment;
 
 import java.util.List;
 
@@ -23,16 +21,10 @@ import java.util.List;
 
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder> {
 
-    private final List<Recipe> mValues;
+    private final List<Recipe> mRecipes;
 
-    private boolean mTwoPane;
-
-    private AppCompatActivity mContext;
-
-    public RecipeAdapter(AppCompatActivity context, List<Recipe> recipes, boolean twoPane) {
-        mContext = context;
-        mValues = recipes;
-        mTwoPane = twoPane;
+    public RecipeAdapter(List<Recipe> recipes) {
+        mRecipes = recipes;
     }
 
     @Override
@@ -44,37 +36,24 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mRecipe = mValues.get(position);
-        holder.mIdView.setText(String.valueOf(mValues.get(position).getId()));
-        holder.mContentView.setText(mValues.get(position).getName());
+        holder.mRecipe = mRecipes.get(position);
+        holder.mIdView.setText(String.valueOf(mRecipes.get(position).getId()));
+        holder.mContentView.setText(mRecipes.get(position).getName());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // If two panel, we call a fragment into recipe_detail_container
-                // Otherwise we just call a new activity wich contain the same fragment.
-                if (mTwoPane) {
-                    Bundle arguments = new Bundle();
-                    arguments.putParcelable(recipeDetailFragment.ARG_RECIPE, holder.mRecipe);
-                    recipeDetailFragment fragment = new recipeDetailFragment();
-                    fragment.setArguments(arguments);
-                    mContext.getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.recipe_detail_container, fragment)
-                            .commit();
-                } else {
-                    Context context = v.getContext();
-                    Intent intent = new Intent(context, recipeDetailActivity.class);
-                    intent.putExtra(recipeDetailFragment.ARG_RECIPE, holder.mRecipe);
-
-                    context.startActivity(intent);
-                }
+                Context context = v.getContext();
+                Intent intent = new Intent(context, RecipeDetailActivity.class);
+                intent.putExtra(RecipeDetailFragment.ARG_RECIPE, holder.mRecipe);
+                context.startActivity(intent);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return mRecipes.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -86,13 +65,8 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = view.findViewById(R.id.id);
-            mContentView =  view.findViewById(R.id.content);
-        }
-
-        @Override
-        public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            mIdView = view.findViewById(R.id.recipe_id);
+            mContentView = view.findViewById(R.id.recipe_name);
         }
     }
 }

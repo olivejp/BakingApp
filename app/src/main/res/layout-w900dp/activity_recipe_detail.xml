@@ -5,10 +5,19 @@
     android:fitsSystemWindows="true"
     tools:context="com.orlanth23.bakingapp.RecipeDetailActivity"
     tools:ignore="MergeRootFrame"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:baselineAligned="false">
 
     <FrameLayout
         android:id="@+id/frame_detail_recipe"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+    <FrameLayout
+        android:id="@+id/frame_step_container"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2">
+    </FrameLayout>
 </LinearLayout>

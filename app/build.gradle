@@ -26,20 +26,19 @@ dependencies {
     compile 'com.android.support:support-v4:' + rootProject.supportLibVersion;
     compile 'com.android.support:recyclerview-v7:' + rootProject.supportLibVersion;
     compile 'com.android.support:design:' + rootProject.supportLibVersion;
-    compile 'com.google.code.gson:gson:2.7';
-
-    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:cardview-v7:' + rootProject.supportLibVersion;
+    compile 'com.jakewharton:butterknife:8.6.0'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
 
     // Testing-only dependencies
+    androidTestCompile 'com.android.support:support-annotations:' + rootProject.supportLibVersion;
     androidTestCompile 'com.android.support.test:runner:' + rootProject.runnerVersion;
     androidTestCompile 'com.android.support.test:rules:' + rootProject.rulesVersion;
     androidTestCompile('com.android.support.test.espresso:espresso-core:' + rootProject.espressoVersion, {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    // Note that espresso-idling-resource is used in the code under test.
     compile 'com.android.support.test.espresso:espresso-idling-resource:' + rootProject.espressoVersion;
-
-    // Force usage of support annotations in the test app, since it is internally used by the
-    // runner module.
-    androidTestCompile 'com.android.support:support-annotations:' + rootProject.supportLibVersion;
+    compile 'com.google.code.gson:gson:2.7'
+    testCompile 'junit:junit:4.12'
 }

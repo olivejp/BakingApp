@@ -12,13 +12,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.Matchers.anything;
 
 /**
  * Instrumentation test, which will execute on an Android device.
@@ -30,7 +27,7 @@ import static org.hamcrest.Matchers.anything;
 public class ExampleInstrumentedTest {
 
     @Rule
-    public ActivityTestRule<recipeListActivity> activityActivityTestRule = new ActivityTestRule<>(recipeListActivity.class);
+    public ActivityTestRule<MainActivity> activityActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
     private IdlingResource mIdlingResource;
 
@@ -42,8 +39,7 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void clickOn() throws Exception {
-        onData(anything()).inAdapterView(withId(R.id.recipe_list)).atPosition(1).perform(click());
-        onView(withId(R.id.recipe_detail)).check(matches(withText("Nutella Pie")));
+        onView(withId(R.id.recipe_list)).check(matches(withText("Nutella Pie")));
     }
 
     @After

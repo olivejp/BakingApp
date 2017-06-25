@@ -12,7 +12,7 @@ import static org.junit.Assert.assertTrue;
 public class NetworkUtilsTest {
 
     private String getJsonFromInternet() {
-        return NetworkUtils.makeServiceCall(recipeListActivity.API_URL);
+        return NetworkUtils.makeServiceCall(MainActivity.API_URL);
     }
 
     @Test

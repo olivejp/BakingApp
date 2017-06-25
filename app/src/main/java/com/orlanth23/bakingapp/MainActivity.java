@@ -20,26 +20,16 @@ import com.orlanth23.bakingapp.IdlingResource.SimpleIdlingResource;
 import com.orlanth23.bakingapp.adapter.RecipeAdapter;
 import com.orlanth23.bakingapp.domain.ListRecipe;
 import com.orlanth23.bakingapp.domain.Recipe;
-import com.orlanth23.bakingapp.network.JsonDownloader;
 import com.orlanth23.bakingapp.network.NetworkUtils;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-/**
- * An activity representing a list of Recipes. This activity
- * has different presentations for handset and tablet-size devices. On
- * handsets, the activity presents a list of items, which when touched,
- * lead to a {@link recipeDetailActivity} representing
- * item details. On tablets, the activity presents the list of items and
- * item details side-by-side using two vertical panes.
- */
-public class recipeListActivity extends AppCompatActivity implements JsonDownloader.DelayerCallback {
+public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = recipeListActivity.class.getName();
+    private static final String TAG = MainActivity.class.getName();
     public static final String API_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
 
-    private boolean mTwoPane;
     private Context mContext = this;
     private ListRecipe mListRecipes = ListRecipe.getInstance();
     private RecyclerView mRecyclerView;
@@ -52,6 +42,10 @@ public class recipeListActivity extends AppCompatActivity implements JsonDownloa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (mIdlingResource != null) {
+            mIdlingResource.setIdleState(false);
+        }
+
         setContentView(R.layout.activity_recipe_list);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -61,11 +55,6 @@ public class recipeListActivity extends AppCompatActivity implements JsonDownloa
         mRecyclerView = (RecyclerView) findViewById(R.id.recipe_list);
         assert mRecyclerView != null;
 
-        // Are we in two panel mode
-        if (findViewById(R.id.recipe_detail_container) != null) {
-            mTwoPane = true;
-        }
-
         // Call network to get recipe list
         if (!mListRecipes.hasBeenLoaded()) {
             new GetRecipesFromNetwork().execute();
@@ -74,16 +63,8 @@ public class recipeListActivity extends AppCompatActivity implements JsonDownloa
         }
     }
 
-    @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        if (mIdlingResource != null) {
-            mIdlingResource.setIdleState(false);
-        }
-    }
-
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new RecipeAdapter(this, mListRecipes.getListRecipe(), mTwoPane));
+        recyclerView.setAdapter(new RecipeAdapter(mListRecipes.getListRecipe()));
 
         if (mIdlingResource != null) {
             mIdlingResource.setIdleState(true);
@@ -95,13 +76,9 @@ public class recipeListActivity extends AppCompatActivity implements JsonDownloa
     public IdlingResource getIdlingResource() {
         if (mIdlingResource == null) {
             mIdlingResource = new SimpleIdlingResource();
+            mIdlingResource.setIdleState(false);
         }
         return mIdlingResource;
-    }
-
-    @Override
-    public void onDone(ArrayList<Recipe> listRecipes) {
-
     }
 
     private class GetRecipesFromNetwork extends AsyncTask<Void, Void, String> {

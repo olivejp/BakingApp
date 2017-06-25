@@ -21,20 +21,13 @@ import android.support.test.espresso.IdlingResource;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * A very simple implementation of {@link IdlingResource}.
- * <p>
- * Consider using CountingIdlingResource from espresso-contrib package if you use this class from
- * multiple threads or need to keep a count of pending operations.
- */
-
 public class SimpleIdlingResource implements IdlingResource {
-
-    @Nullable
-    private volatile ResourceCallback mCallback;
 
     // Idleness is controlled with this boolean.
     private AtomicBoolean mIsIdleNow = new AtomicBoolean(true);
+
+    @Nullable
+    private volatile ResourceCallback mCallback;
 
     @Override
     public String getName() {
@@ -50,6 +43,7 @@ public class SimpleIdlingResource implements IdlingResource {
     public void registerIdleTransitionCallback(ResourceCallback callback) {
         mCallback = callback;
     }
+
 
     /**
      * Sets the new idle state, if isIdleNow is true, it pings the {@link ResourceCallback}.
