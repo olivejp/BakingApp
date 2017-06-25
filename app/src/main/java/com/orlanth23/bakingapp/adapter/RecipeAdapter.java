@@ -9,11 +9,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.orlanth23.bakingapp.R;
-import com.orlanth23.bakingapp.RecipeDetailActivity;
-import com.orlanth23.bakingapp.RecipeDetailFragment;
+import com.orlanth23.bakingapp.activity.RecipeDetailActivity;
 import com.orlanth23.bakingapp.domain.Recipe;
+import com.orlanth23.bakingapp.fragment.RecipeDetailFragment;
 
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by orlanth23 on 24/06/2017.
@@ -56,17 +59,18 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
         return mRecipes.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public Recipe mRecipe;
+    class ViewHolder extends RecyclerView.ViewHolder {
+        final View mView;
+        @BindView(R.id.recipe_id)
+        TextView mIdView;
+        @BindView(R.id.recipe_name)
+        TextView mContentView;
+        Recipe mRecipe;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = view.findViewById(R.id.recipe_id);
-            mContentView = view.findViewById(R.id.recipe_name);
+            ButterKnife.bind(this, mView);
         }
     }
 }

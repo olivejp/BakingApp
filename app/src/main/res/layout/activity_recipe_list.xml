@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.orlanth23.bakingapp.MainActivity">
+    tools:context="com.orlanth23.bakingapp.activity.RecipeListActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
@@ -27,9 +27,7 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/recipe_list"
             android:name="com.orlanth23.bakingapp.recipeListFragment"
             android:layout_width="match_parent"
@@ -37,7 +35,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             app:layoutManager="LinearLayoutManager"
-            tools:context="com.orlanth23.bakingapp.MainActivity"
+            tools:context="com.orlanth23.bakingapp.activity.RecipeListActivity"
             tools:listitem="@layout/recipe_list_content" />
     </FrameLayout>
 

@@ -1,4 +1,4 @@
-package com.orlanth23.bakingapp;
+package com.orlanth23.bakingapp.activity;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.adapter.StepAdapter;
 import com.orlanth23.bakingapp.domain.Step;
 

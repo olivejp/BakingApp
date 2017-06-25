@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.orlanth23.bakingapp.RecipeDetailActivity"
+    tools:context="com.orlanth23.bakingapp.activity.RecipeDetailActivity"
     tools:ignore="MergeRootFrame">
 
     <android.support.design.widget.AppBarLayout
@@ -43,24 +43,52 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_margin="10dp">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recipe_detail_list_ingredients"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ingredients"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recipe_detail_list_steps"
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recipe_detail_list_ingredients"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="16dp"
+                    app:layoutManager="LinearLayoutManager"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Steps"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recipe_detail_list_steps"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="16dp"
+                    app:layoutManager="LinearLayoutManager"
+                    android:layout_marginTop="4dp"/>
+            </LinearLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
+
+
 
 
 </android.support.design.widget.CoordinatorLayout>

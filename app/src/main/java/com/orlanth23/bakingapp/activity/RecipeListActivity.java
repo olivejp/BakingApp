@@ -1,4 +1,4 @@
-package com.orlanth23.bakingapp;
+package com.orlanth23.bakingapp.activity;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -17,6 +17,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.orlanth23.bakingapp.IdlingResource.SimpleIdlingResource;
+import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.adapter.RecipeAdapter;
 import com.orlanth23.bakingapp.domain.ListRecipe;
 import com.orlanth23.bakingapp.domain.Recipe;
@@ -25,9 +26,9 @@ import com.orlanth23.bakingapp.network.NetworkUtils;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class RecipeListActivity extends AppCompatActivity {
 
-    private static final String TAG = MainActivity.class.getName();
+    private static final String TAG = RecipeListActivity.class.getName();
     public static final String API_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
 
     private Context mContext = this;

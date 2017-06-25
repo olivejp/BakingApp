@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.orlanth23.bakingapp.RecipeDetailActivity"
+    tools:context="com.orlanth23.bakingapp.activity.RecipeDetailActivity"
     tools:ignore="MergeRootFrame"
     android:orientation="horizontal">
 

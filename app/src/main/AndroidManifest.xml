@@ -18,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.RecipeListActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -28,26 +28,26 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".RecipeDetailActivity"
+            android:name=".activity.RecipeDetailActivity"
             android:label="@string/title_recipe_detail"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".activity.RecipeListActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.orlanth23.bakingapp.MainActivity" />
+                android:value="com.orlanth23.bakingapp.activity.RecipeListActivity" />
         </activity>
         <activity
-            android:name=".StepListActivity"
+            android:name=".activity.StepListActivity"
             android:label="@string/title_step_list"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".StepDetailActivity"
+            android:name=".activity.StepDetailActivity"
             android:label="@string/title_step_detail"
-            android:parentActivityName=".StepListActivity"
+            android:parentActivityName=".activity.StepListActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.orlanth23.bakingapp.StepListActivity" />
+                android:value="com.orlanth23.bakingapp.activity.StepListActivity" />
         </activity>
     </application>
 

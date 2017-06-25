@@ -1,4 +1,4 @@
-package com.orlanth23.bakingapp;
+package com.orlanth23.bakingapp.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
+
+import com.orlanth23.bakingapp.R;
+import com.orlanth23.bakingapp.fragment.StepDetailFragment;
 
 public class StepDetailActivity extends AppCompatActivity {
 

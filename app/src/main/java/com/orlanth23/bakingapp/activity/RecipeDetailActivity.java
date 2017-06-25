@@ -1,4 +1,4 @@
-package com.orlanth23.bakingapp;
+package com.orlanth23.bakingapp.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,7 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.domain.Recipe;
+import com.orlanth23.bakingapp.fragment.RecipeDetailFragment;
 
 public class RecipeDetailActivity extends AppCompatActivity {
 
@@ -51,7 +53,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            NavUtils.navigateUpTo(this, new Intent(this, MainActivity.class));
+            NavUtils.navigateUpTo(this, new Intent(this, RecipeListActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);

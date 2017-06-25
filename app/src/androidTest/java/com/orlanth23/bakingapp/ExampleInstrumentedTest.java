@@ -6,6 +6,8 @@ import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.orlanth23.bakingapp.activity.RecipeListActivity;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -27,7 +29,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 public class ExampleInstrumentedTest {
 
     @Rule
-    public ActivityTestRule<MainActivity> activityActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+    public ActivityTestRule<RecipeListActivity> activityActivityTestRule = new ActivityTestRule<>(RecipeListActivity.class);
 
     private IdlingResource mIdlingResource;
 

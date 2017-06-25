@@ -11,12 +11,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.orlanth23.bakingapp.R;
-import com.orlanth23.bakingapp.RecipeDetailActivity;
-import com.orlanth23.bakingapp.StepDetailActivity;
-import com.orlanth23.bakingapp.StepDetailFragment;
+import com.orlanth23.bakingapp.activity.StepDetailActivity;
 import com.orlanth23.bakingapp.domain.Step;
+import com.orlanth23.bakingapp.fragment.StepDetailFragment;
 
 import java.util.ArrayList;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by orlanth23 on 25/06/2017.
@@ -27,12 +29,12 @@ public class StepAdapter
 
     private final ArrayList<Step> mListSteps;
     private boolean mTwoPane;
-    private AppCompatActivity mContext;
+    private AppCompatActivity mAppCompatActivity;
 
-    public StepAdapter(AppCompatActivity context, ArrayList<Step> items, boolean twoPane) {
+    public StepAdapter(AppCompatActivity activity, ArrayList<Step> items, boolean twoPane) {
         mListSteps = items;
         mTwoPane = twoPane;
-        mContext = context;
+        mAppCompatActivity = activity;
     }
 
     @Override
@@ -45,8 +47,7 @@ public class StepAdapter
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mStep = mListSteps.get(position);
-        holder.mIdView.setText(mListSteps.get(position).getId());
-        holder.mContentView.setText(mListSteps.get(position).getShortDescription());
+        holder.mShortDescriptionView.setText(mListSteps.get(position).getShortDescription());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,8 +57,8 @@ public class StepAdapter
                     arguments.putParcelable(StepDetailFragment.ARG_STEP, holder.mStep);
                     StepDetailFragment fragment = new StepDetailFragment();
                     fragment.setArguments(arguments);
-                    ((RecipeDetailActivity)mContext).getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.step_detail_container, fragment)
+                    mAppCompatActivity.getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.frame_step_container, fragment)
                             .commit();
                 } else {
                     Context context = v.getContext();
@@ -75,22 +76,17 @@ public class StepAdapter
         return mListSteps.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public Step mStep;
+    class ViewHolder extends RecyclerView.ViewHolder {
+        final View mView;
+        Step mStep;
 
-        public ViewHolder(View view) {
+        @BindView(R.id.step_short_description)
+        TextView mShortDescriptionView;
+
+        ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = view.findViewById(R.id.id);
-            mContentView = view.findViewById(R.id.content);
-        }
-
-        @Override
-        public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            ButterKnife.bind(this, mView);
         }
     }
 }
