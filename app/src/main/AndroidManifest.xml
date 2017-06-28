@@ -37,17 +37,13 @@
                 android:value="com.orlanth23.bakingapp.activity.RecipeListActivity" />
         </activity>
         <activity
-            android:name=".activity.StepListActivity"
-            android:label="@string/title_step_list"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".activity.StepDetailActivity"
             android:label="@string/title_step_detail"
-            android:parentActivityName=".activity.StepListActivity"
+            android:parentActivityName=".activity.RecipeDetailActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.orlanth23.bakingapp.activity.StepListActivity" />
+                android:value="com.orlanth23.bakingapp.activity.RecipeDetailActivity" />
         </activity>
     </application>
 

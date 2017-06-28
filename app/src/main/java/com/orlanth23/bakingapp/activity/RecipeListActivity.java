@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.test.espresso.IdlingResource;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -53,7 +54,11 @@ public class RecipeListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         mRecyclerView = (RecyclerView) findViewById(R.id.recipe_list);
+        mRecyclerView.setLayoutManager(gridLayoutManager);
+
+
         assert mRecyclerView != null;
 
         // Call network to get recipe list

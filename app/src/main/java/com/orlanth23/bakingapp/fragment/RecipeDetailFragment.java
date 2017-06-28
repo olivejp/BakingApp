@@ -55,7 +55,7 @@ public class RecipeDetailFragment extends Fragment {
         appBarLayout.setTitle(mRecipe.getName());
 
         mRecyclerViewIngredients.setAdapter(new IngredientAdapter(mRecipe.getIngredients()));
-        mRecyclerViewSteps.setAdapter(new StepAdapter((AppCompatActivity) this.getActivity(), mRecipe.getSteps(), mTwoPane));
+        mRecyclerViewSteps.setAdapter(new StepAdapter((AppCompatActivity) this.getActivity(), mRecipe, mTwoPane));
 
         return rootView;
     }

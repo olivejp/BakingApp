@@ -12,10 +12,9 @@ import android.widget.TextView;
 
 import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.activity.StepDetailActivity;
+import com.orlanth23.bakingapp.domain.Recipe;
 import com.orlanth23.bakingapp.domain.Step;
 import com.orlanth23.bakingapp.fragment.StepDetailFragment;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,12 +26,12 @@ import butterknife.ButterKnife;
 public class StepAdapter
         extends RecyclerView.Adapter<StepAdapter.ViewHolder> {
 
-    private final ArrayList<Step> mListSteps;
+    private final Recipe mRecipe;
     private boolean mTwoPane;
     private AppCompatActivity mAppCompatActivity;
 
-    public StepAdapter(AppCompatActivity activity, ArrayList<Step> items, boolean twoPane) {
-        mListSteps = items;
+    public StepAdapter(AppCompatActivity activity, Recipe recipe, boolean twoPane) {
+        mRecipe = recipe;
         mTwoPane = twoPane;
         mAppCompatActivity = activity;
     }
@@ -46,8 +45,8 @@ public class StepAdapter
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mStep = mListSteps.get(position);
-        holder.mShortDescriptionView.setText(mListSteps.get(position).getShortDescription());
+        holder.mStep = mRecipe.getSteps().get(position);
+        holder.mShortDescriptionView.setText(mRecipe.getSteps().get(position).getShortDescription());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,8 +62,8 @@ public class StepAdapter
                 } else {
                     Context context = v.getContext();
                     Intent intent = new Intent(context, StepDetailActivity.class);
-                    intent.putExtra(StepDetailFragment.ARG_STEP, holder.mStep);
-
+                    intent.putExtra(StepDetailActivity.ARG_STEP_INDEX, holder.getAdapterPosition());
+                    intent.putExtra(StepDetailActivity.ARG_RECIPE, mRecipe);
                     context.startActivity(intent);
                 }
             }
@@ -73,7 +72,7 @@ public class StepAdapter
 
     @Override
     public int getItemCount() {
-        return mListSteps.size();
+        return mRecipe.getSteps().size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

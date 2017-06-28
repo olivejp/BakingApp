@@ -37,9 +37,6 @@ import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.activity.RecipeListActivity;
 import com.orlanth23.bakingapp.domain.Step;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 
@@ -54,11 +51,11 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     private NotificationManager mNotificationManager;
 
     private SimpleExoPlayerView mPlayerView;
-    @BindView(R.id.step_description)
-    TextView mStepDescription;
 
     public StepDetailFragment() {
     }
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,7 +65,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
             mStep = getArguments().getParcelable(ARG_STEP);
         }
 
-        // Initialize the Media Session.
         initializeMediaSession();
     }
 
@@ -77,10 +73,12 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_step_detail, container, false);
 
-        ButterKnife.bind(this, rootView);
-        mStepDescription.setText(mStep.getDescription());
-
+        TextView mStepDescription = rootView.findViewById(R.id.step_description);
         mPlayerView = rootView.findViewById(R.id.playerView);
+
+        if (mStepDescription != null) {
+            mStepDescription.setText(mStep.getDescription());
+        }
 
         // Initialize the player.
         if (!TextUtils.isEmpty(mStep.getVideoURL())) {
@@ -112,7 +110,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
                 .setActions(
                         PlaybackStateCompat.ACTION_PLAY |
                                 PlaybackStateCompat.ACTION_PAUSE |
-                                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
                                 PlaybackStateCompat.ACTION_PLAY_PAUSE);
 
         mMediaSession.setPlaybackState(mStateBuilder.build());
@@ -143,7 +140,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
             mExoPlayer.addListener(this);
 
             // Prepare the MediaSource.
-            String userAgent = Util.getUserAgent(getActivity(), "ClassicalMusicQuiz");
+            String userAgent = Util.getUserAgent(getActivity(), getString(R.string.app_name));
             MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
                     getContext(), userAgent), new DefaultExtractorsFactory(), null, null);
             mExoPlayer.prepare(mediaSource);
@@ -176,11 +173,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
                 MediaButtonReceiver.buildMediaButtonPendingIntent(getContext(),
                         PlaybackStateCompat.ACTION_PLAY_PAUSE));
 
-        NotificationCompat.Action restartAction = new android.support.v4.app.NotificationCompat
-                .Action(R.drawable.exo_controls_previous, "restart",
-                MediaButtonReceiver.buildMediaButtonPendingIntent
-                        (getContext(), PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS));
-
         PendingIntent contentPendingIntent = PendingIntent.getActivity
                 (getContext(), 0, new Intent(getContext(), RecipeListActivity.class), 0);
 
@@ -189,11 +181,10 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
                 .setContentIntent(contentPendingIntent)
                 .setSmallIcon(R.drawable.exo_controls_play)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .addAction(restartAction)
                 .addAction(playPauseAction)
                 .setStyle(new NotificationCompat.MediaStyle()
                         .setMediaSession(mMediaSession.getSessionToken())
-                        .setShowActionsInCompactView(0, 1));
+                        .setShowActionsInCompactView(0));
 
 
         mNotificationManager = (NotificationManager) getContext().getSystemService(NOTIFICATION_SERVICE);
@@ -233,11 +224,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         @Override
         public void onPause() {
             mExoPlayer.setPlayWhenReady(false);
-        }
-
-        @Override
-        public void onSkipToPrevious() {
-            mExoPlayer.seekTo(0);
         }
     }
 
