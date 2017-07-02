@@ -45,6 +45,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.orlanth23.bakingapp.activity.RecipeDetailActivity" />
         </activity>
+        <provider
+            android:authorities="com.orlanth23.bakingapp.RecipesProvider"
+            android:name=".provider.generated.RecipesProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>

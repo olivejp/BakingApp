@@ -14,6 +14,10 @@ import com.orlanth23.bakingapp.fragment.RecipeDetailFragment;
 
 public class RecipeDetailActivity extends AppCompatActivity {
 
+    private static final String TAG_RECIPE_DETAIL_FRAGMENT = "TAG_RECIPE_DETAIL_FRAGMENT";
+    public static final String ARG_RECIPE = "ARG_RECIPE";
+    private RecipeDetailFragment mRecipeDetailFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,20 +37,20 @@ public class RecipeDetailActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        Recipe mRecipe = getIntent().getParcelableExtra(RecipeDetailFragment.ARG_RECIPE);
-
-        if (savedInstanceState == null) {
-            // Create the detail fragment and add it to the activity
-            // using a fragment transaction.
-            Bundle arguments = new Bundle();
-            arguments.putParcelable(RecipeDetailFragment.ARG_RECIPE, mRecipe);
-            arguments.putBoolean(RecipeDetailFragment.ARG_TWO_PANE, mTwoPane);
-            RecipeDetailFragment fragment = new RecipeDetailFragment();
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.frame_detail_recipe, fragment)
-                    .commit();
+        RecipeDetailFragment recipeDetailFragment = (RecipeDetailFragment) getSupportFragmentManager().findFragmentByTag(TAG_RECIPE_DETAIL_FRAGMENT);
+        if (recipeDetailFragment != null) {
+            getSupportFragmentManager().beginTransaction().remove(recipeDetailFragment).commit();
         }
+
+        // Create the detail fragment and add it to the activity
+        // using a fragment transaction.
+        Recipe mRecipe = getIntent().getParcelableExtra(ARG_RECIPE);
+
+        mRecipeDetailFragment = RecipeDetailFragment.newInstance(mRecipe, mTwoPane);
+
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.frame_detail_recipe, mRecipeDetailFragment, TAG_RECIPE_DETAIL_FRAGMENT)
+                .commit();
     }
 
     @Override
@@ -57,5 +61,11 @@ public class RecipeDetailActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        getSupportFragmentManager().putFragment(outState, TAG_RECIPE_DETAIL_FRAGMENT, mRecipeDetailFragment);
     }
 }

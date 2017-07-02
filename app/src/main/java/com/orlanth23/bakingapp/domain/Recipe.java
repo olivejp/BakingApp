@@ -10,18 +10,18 @@ import java.util.ArrayList;
  */
 
 public class Recipe implements Parcelable {
-    private int id;
+    private long id;
     private String name;
     private ArrayList<Ingredient> ingredients;
     private ArrayList<Step> steps;
     private int servings;
     private String image;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -73,7 +73,7 @@ public class Recipe implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.id);
+        dest.writeLong(this.id);
         dest.writeString(this.name);
         dest.writeTypedList(this.ingredients);
         dest.writeTypedList(this.steps);
@@ -85,7 +85,7 @@ public class Recipe implements Parcelable {
     }
 
     protected Recipe(Parcel in) {
-        this.id = in.readInt();
+        this.id = in.readLong();
         this.name = in.readString();
         this.ingredients = in.createTypedArrayList(Ingredient.CREATOR);
         this.steps = in.createTypedArrayList(Step.CREATOR);

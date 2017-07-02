@@ -19,9 +19,6 @@ import butterknife.ButterKnife;
 
 public class RecipeDetailFragment extends Fragment {
 
-    public static final String ARG_RECIPE = "recipe";
-    public static final String ARG_TWO_PANE = "twoPane";
-
     private Recipe mRecipe;
     private boolean mTwoPane;
 
@@ -33,16 +30,16 @@ public class RecipeDetailFragment extends Fragment {
     public RecipeDetailFragment() {
     }
 
+    public static RecipeDetailFragment newInstance(Recipe recipe, boolean twoPane){
+        RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
+        recipeDetailFragment.setmRecipe(recipe);
+        recipeDetailFragment.setmTwoPane(twoPane);
+        return recipeDetailFragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments().containsKey(ARG_RECIPE)) {
-            mRecipe = getArguments().getParcelable(ARG_RECIPE);
-        }
-        if (getArguments().containsKey(ARG_TWO_PANE)) {
-            mTwoPane = getArguments().getBoolean(ARG_TWO_PANE);
-        }
     }
 
     @Override
@@ -58,5 +55,13 @@ public class RecipeDetailFragment extends Fragment {
         mRecyclerViewSteps.setAdapter(new StepAdapter((AppCompatActivity) this.getActivity(), mRecipe, mTwoPane));
 
         return rootView;
+    }
+
+    public void setmRecipe(Recipe mRecipe) {
+        this.mRecipe = mRecipe;
+    }
+
+    public void setmTwoPane(boolean mTwoPane) {
+        this.mTwoPane = mTwoPane;
     }
 }

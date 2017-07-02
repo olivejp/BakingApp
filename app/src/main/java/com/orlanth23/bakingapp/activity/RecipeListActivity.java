@@ -1,6 +1,9 @@
 package com.orlanth23.bakingapp.activity;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,9 +23,12 @@ import com.google.gson.reflect.TypeToken;
 import com.orlanth23.bakingapp.IdlingResource.SimpleIdlingResource;
 import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.adapter.RecipeAdapter;
-import com.orlanth23.bakingapp.domain.ListRecipe;
+import com.orlanth23.bakingapp.domain.Ingredient;
 import com.orlanth23.bakingapp.domain.Recipe;
+import com.orlanth23.bakingapp.domain.Step;
 import com.orlanth23.bakingapp.network.NetworkUtils;
+import com.orlanth23.bakingapp.provider.ProviderUtilities;
+import com.orlanth23.bakingapp.provider.RecipesProvider;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -33,8 +39,8 @@ public class RecipeListActivity extends AppCompatActivity {
     public static final String API_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
 
     private Context mContext = this;
-    private ListRecipe mListRecipes = ListRecipe.getInstance();
     private RecyclerView mRecyclerView;
+    private boolean isConnected;
 
     // The Idling Resource which will be null in production.
     @Nullable
@@ -62,15 +68,49 @@ public class RecipeListActivity extends AppCompatActivity {
         assert mRecyclerView != null;
 
         // Call network to get recipe list
-        if (!mListRecipes.hasBeenLoaded()) {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
+        if (isConnected) {
             new GetRecipesFromNetwork().execute();
-        } else {
-            setupRecyclerView(mRecyclerView);
         }
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new RecipeAdapter(mListRecipes.getListRecipe()));
+        ArrayList<Recipe> recipeList = new ArrayList<>();
+        Cursor cursor = getContentResolver().query(RecipesProvider.ListRecipe.LIST_RECIPE, null, null, null, null);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                Recipe recipe = ProviderUtilities.getRecipeFromCursor(cursor);
+
+                Cursor cursorStep = getContentResolver().query(RecipesProvider.ListStep.withRecipeId(recipe.getId()), null, null, null, null);
+                if (cursorStep != null) {
+                    while (cursorStep.moveToNext()) {
+                        Step step = ProviderUtilities.getStepFromCursor(cursorStep);
+                        recipe.getSteps().add(step);
+                    }
+                    cursorStep.close();
+                }
+
+                Cursor cursorIngredient = getContentResolver().query(RecipesProvider.ListIngredient.withRecipeId(recipe.getId()), null, null, null, null);
+                if (cursorIngredient != null) {
+                    while (cursorIngredient.moveToNext()) {
+                        Ingredient ingredient = ProviderUtilities.getIngredientFromCursor(cursorIngredient);
+                        recipe.getIngredients().add(ingredient);
+                    }
+                    cursorIngredient.close();
+                }
+
+                recipeList.add(recipe);
+            }
+            cursor.close();
+        }
+
+        recyclerView.setAdapter(new RecipeAdapter(recipeList));
 
         if (mIdlingResource != null) {
             mIdlingResource.setIdleState(true);
@@ -102,8 +142,7 @@ public class RecipeListActivity extends AppCompatActivity {
                 }.getType();
                 try {
                     ArrayList<Recipe> tempList = gson.fromJson(json, listType);
-                    mListRecipes.setListRecipe(tempList);
-                    mListRecipes.setHasBeenLoaded(true);
+                    ProviderUtilities.populateContentProviderFromJson(mContext, tempList);
                     setupRecyclerView(mRecyclerView);
                 } catch (JsonSyntaxException e) {
                     Log.e(TAG, e.getMessage(), e);

@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.activity.RecipeDetailActivity;
 import com.orlanth23.bakingapp.domain.Recipe;
-import com.orlanth23.bakingapp.fragment.RecipeDetailFragment;
 
 import java.util.List;
 
@@ -48,7 +47,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
             public void onClick(View v) {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, RecipeDetailActivity.class);
-                intent.putExtra(RecipeDetailFragment.ARG_RECIPE, holder.mRecipe);
+                intent.putExtra(RecipeDetailActivity.ARG_RECIPE, holder.mRecipe);
                 context.startActivity(intent);
             }
         });

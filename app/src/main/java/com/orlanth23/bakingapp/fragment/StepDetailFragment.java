@@ -56,7 +56,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     }
 
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +82,10 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         // Initialize the player.
         if (!TextUtils.isEmpty(mStep.getVideoURL())) {
             initializePlayer(Uri.parse(mStep.getVideoURL()));
+        } else {
+            if (!TextUtils.isEmpty(mStep.getThumbnailURL())) {
+                initializePlayer(Uri.parse(mStep.getThumbnailURL()));
+            }
         }
 
         return rootView;
