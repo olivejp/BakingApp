@@ -1,7 +1,5 @@
 package com.orlanth23.bakingapp.adapter;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -11,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.orlanth23.bakingapp.R;
-import com.orlanth23.bakingapp.activity.StepDetailActivity;
+import com.orlanth23.bakingapp.activity.RecipeDetailActivity;
 import com.orlanth23.bakingapp.domain.Recipe;
 import com.orlanth23.bakingapp.domain.Step;
 import com.orlanth23.bakingapp.fragment.StepDetailFragment;
@@ -25,6 +23,8 @@ import butterknife.ButterKnife;
 
 public class StepAdapter
         extends RecyclerView.Adapter<StepAdapter.ViewHolder> {
+
+    private static final String BACKSTACK = "BACKSTACK";
 
     private final Recipe mRecipe;
     private boolean mTwoPane;
@@ -45,26 +45,31 @@ public class StepAdapter
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mStep = mRecipe.getSteps().get(position);
-        holder.mShortDescriptionView.setText(mRecipe.getSteps().get(position).getShortDescription());
+        final int stepIndex = position;
+        holder.mStep = mRecipe.getSteps().get(stepIndex);
+        holder.mShortDescriptionView.setText(holder.mStep.getShortDescription());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Bundle arguments = new Bundle();
+                arguments.putInt(StepDetailFragment.ARG_STEP_INDEX, stepIndex);
+                arguments.putParcelable(StepDetailFragment.ARG_RECIPE, mRecipe);
+
+                StepDetailFragment fragment = new StepDetailFragment();
+                fragment.setArguments(arguments);
+
                 if (mTwoPane) {
-                    Bundle arguments = new Bundle();
-                    arguments.putParcelable(StepDetailFragment.ARG_STEP, holder.mStep);
-                    StepDetailFragment fragment = new StepDetailFragment();
-                    fragment.setArguments(arguments);
                     mAppCompatActivity.getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.frame_step_container, fragment)
+                            .replace(R.id.frame_step_container, fragment, RecipeDetailActivity.TAG_STEP_DETAIL_FRAGMENT)
                             .commit();
                 } else {
-                    Context context = v.getContext();
-                    Intent intent = new Intent(context, StepDetailActivity.class);
-                    intent.putExtra(StepDetailActivity.ARG_STEP_INDEX, holder.getAdapterPosition());
-                    intent.putExtra(StepDetailActivity.ARG_RECIPE, mRecipe);
-                    context.startActivity(intent);
+                    mAppCompatActivity.getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.frame_detail_recipe, fragment, RecipeDetailActivity.TAG_STEP_DETAIL_FRAGMENT)
+                            .addToBackStack(BACKSTACK)
+                            .commit();
                 }
             }
         });

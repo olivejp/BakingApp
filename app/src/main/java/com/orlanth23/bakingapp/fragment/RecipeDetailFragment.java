@@ -1,10 +1,12 @@
 package com.orlanth23.bakingapp.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,9 @@ public class RecipeDetailFragment extends Fragment {
 
     private Recipe mRecipe;
     private boolean mTwoPane;
+    private AppCompatActivity mActivity;
+
+    private static final String TAG = RecipeDetailFragment.class.getName();
 
     @BindView(R.id.recipe_detail_list_ingredients)
     RecyclerView mRecyclerViewIngredients;
@@ -32,9 +37,24 @@ public class RecipeDetailFragment extends Fragment {
 
     public static RecipeDetailFragment newInstance(Recipe recipe, boolean twoPane){
         RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
-        recipeDetailFragment.setmRecipe(recipe);
-        recipeDetailFragment.setmTwoPane(twoPane);
+        recipeDetailFragment.setRecipe(recipe);
+        recipeDetailFragment.setTwoPane(twoPane);
         return recipeDetailFragment;
+    }
+
+    public void updateFragment(boolean twoPane, Recipe recipe){
+        mRecipe = recipe;
+        mTwoPane = twoPane;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mActivity = (AppCompatActivity) context;
+        } catch (ClassCastException e){
+            Log.e(TAG, "RecipeDetailFragment could only be call by a AppCompatActivity",e);
+        }
     }
 
     @Override
@@ -51,17 +71,19 @@ public class RecipeDetailFragment extends Fragment {
         CollapsingToolbarLayout appBarLayout =  rootView.findViewById(R.id.toolbar_layout);
         appBarLayout.setTitle(mRecipe.getName());
 
+        updateFragment(mTwoPane, mRecipe);
+
         mRecyclerViewIngredients.setAdapter(new IngredientAdapter(mRecipe.getIngredients()));
-        mRecyclerViewSteps.setAdapter(new StepAdapter((AppCompatActivity) this.getActivity(), mRecipe, mTwoPane));
+        mRecyclerViewSteps.setAdapter(new StepAdapter(mActivity, mRecipe, mTwoPane));
 
         return rootView;
     }
 
-    public void setmRecipe(Recipe mRecipe) {
+    public void setRecipe(Recipe mRecipe) {
         this.mRecipe = mRecipe;
     }
 
-    public void setmTwoPane(boolean mTwoPane) {
+    public void setTwoPane(boolean mTwoPane) {
         this.mTwoPane = mTwoPane;
     }
 }

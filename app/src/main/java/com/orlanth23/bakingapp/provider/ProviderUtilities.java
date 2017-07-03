@@ -51,22 +51,31 @@ public class ProviderUtilities {
             while (cursorRecipe.moveToNext()) {
                 Recipe recipe = ProviderUtilities.getRecipeFromCursor(cursorRecipe);
 
-                Cursor cursorStep = context.getContentResolver().query(RecipesProvider.ListStep.withRecipeId(recipe.getId()), null, null, null, null);
+                String[] arguments = new String[]{String.valueOf(recipe.getId())};
+
+                String selectionStep = StepInterface.RECIPE_ID + " = ?";
+                String sortOrder = StepInterface._ID;
+                Cursor cursorStep = context.getContentResolver().query(RecipesProvider.ListStep.LIST_STEP, null, selectionStep, arguments, sortOrder);
                 if (cursorStep != null) {
+                    ArrayList<Step> stepList = new ArrayList<>();
                     while (cursorStep.moveToNext()) {
                         Step step = ProviderUtilities.getStepFromCursor(cursorStep);
-                        recipe.getSteps().add(step);
+                        stepList.add(step);
                     }
                     cursorStep.close();
+                    recipe.setSteps(stepList);
                 }
 
-                Cursor cursorIngredient = context.getContentResolver().query(RecipesProvider.ListIngredient.withRecipeId(recipe.getId()), null, null, null, null);
+                String selectionIngredient = IngredientInterface.RECIPE_ID + " = ?";
+                Cursor cursorIngredient = context.getContentResolver().query(RecipesProvider.ListIngredient.LIST_INGREDIENT, null, selectionIngredient, arguments, null);
                 if (cursorIngredient != null) {
+                    ArrayList<Ingredient> ingredientList = new ArrayList<>();
                     while (cursorIngredient.moveToNext()) {
                         Ingredient ingredient = ProviderUtilities.getIngredientFromCursor(cursorIngredient);
-                        recipe.getIngredients().add(ingredient);
+                        ingredientList.add(ingredient);
                     }
                     cursorIngredient.close();
+                    recipe.setIngredients(ingredientList);
                 }
 
                 recipeList.add(recipe);
@@ -76,39 +85,40 @@ public class ProviderUtilities {
         return recipeList;
     }
 
-    public static void populateContentProviderFromJson(Context context, ArrayList<Recipe> recipeList) {
+    public static void populateContentProviderFromList(Context context, ArrayList<Recipe> recipeList) {
         context.getContentResolver().delete(RecipesProvider.ListIngredient.LIST_INGREDIENT, null, null);
         context.getContentResolver().delete(RecipesProvider.ListStep.LIST_STEP, null, null);
         context.getContentResolver().delete(RecipesProvider.ListRecipe.LIST_RECIPE, null, null);
+        ContentValues contentValues = new ContentValues();
         for (Recipe recipe :
                 recipeList) {
             for (Step step :
                     recipe.getSteps()) {
-                ContentValues cvStep = new ContentValues();
-                cvStep.put(StepInterface.RECIPE_ID, recipe.getId());
-                cvStep.put(StepInterface.thumbnailURL, step.getThumbnailURL());
-                cvStep.put(StepInterface.videoURL, step.getVideoURL());
-                cvStep.put(StepInterface.shortDescription, step.getShortDescription());
-                cvStep.put(StepInterface.description, step.getDescription());
-                context.getContentResolver().insert(RecipesProvider.ListStep.LIST_STEP, cvStep);
+                contentValues.clear();
+                contentValues.put(StepInterface.RECIPE_ID, recipe.getId());
+                contentValues.put(StepInterface.thumbnailURL, step.getThumbnailURL());
+                contentValues.put(StepInterface.videoURL, step.getVideoURL());
+                contentValues.put(StepInterface.shortDescription, step.getShortDescription());
+                contentValues.put(StepInterface.description, step.getDescription());
+                context.getContentResolver().insert(RecipesProvider.ListStep.LIST_STEP, contentValues);
             }
 
             for (Ingredient ingredient :
                     recipe.getIngredients()) {
-                ContentValues cvIngredient = new ContentValues();
-                cvIngredient.put(IngredientInterface.RECIPE_ID, recipe.getId());
-                cvIngredient.put(IngredientInterface.quantity, ingredient.getQuantity());
-                cvIngredient.put(IngredientInterface.measure, ingredient.getQuantity());
-                cvIngredient.put(IngredientInterface.ingredient, ingredient.getQuantity());
-                context.getContentResolver().insert(RecipesProvider.ListIngredient.LIST_INGREDIENT, cvIngredient);
+                contentValues.clear();
+                contentValues.put(IngredientInterface.RECIPE_ID, recipe.getId());
+                contentValues.put(IngredientInterface.quantity, ingredient.getQuantity());
+                contentValues.put(IngredientInterface.measure, ingredient.getMeasure());
+                contentValues.put(IngredientInterface.ingredient, ingredient.getIngredient());
+                context.getContentResolver().insert(RecipesProvider.ListIngredient.LIST_INGREDIENT, contentValues);
             }
 
-            ContentValues cvRecipe = new ContentValues();
-            cvRecipe.put(RecipeInterface._ID, recipe.getId());
-            cvRecipe.put(RecipeInterface.name, recipe.getName());
-            cvRecipe.put(RecipeInterface.servings, recipe.getServings());
-            cvRecipe.put(RecipeInterface.image, recipe.getImage());
-            context.getContentResolver().insert(RecipesProvider.ListRecipe.LIST_RECIPE, cvRecipe);
+            contentValues.clear();
+            contentValues.put(RecipeInterface._ID, recipe.getId());
+            contentValues.put(RecipeInterface.name, recipe.getName());
+            contentValues.put(RecipeInterface.servings, recipe.getServings());
+            contentValues.put(RecipeInterface.image, recipe.getImage());
+            context.getContentResolver().insert(RecipesProvider.ListRecipe.LIST_RECIPE, contentValues);
         }
     }
 }

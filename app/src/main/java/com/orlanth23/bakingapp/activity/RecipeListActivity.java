@@ -1,7 +1,6 @@
 package com.orlanth23.bakingapp.activity;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -23,12 +22,9 @@ import com.google.gson.reflect.TypeToken;
 import com.orlanth23.bakingapp.IdlingResource.SimpleIdlingResource;
 import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.adapter.RecipeAdapter;
-import com.orlanth23.bakingapp.domain.Ingredient;
 import com.orlanth23.bakingapp.domain.Recipe;
-import com.orlanth23.bakingapp.domain.Step;
 import com.orlanth23.bakingapp.network.NetworkUtils;
 import com.orlanth23.bakingapp.provider.ProviderUtilities;
-import com.orlanth23.bakingapp.provider.RecipesProvider;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -67,7 +63,6 @@ public class RecipeListActivity extends AppCompatActivity {
 
         assert mRecyclerView != null;
 
-        // Call network to get recipe list
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -75,42 +70,23 @@ public class RecipeListActivity extends AppCompatActivity {
         isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
 
-        if (isConnected) {
-            new GetRecipesFromNetwork().execute();
+        ArrayList<Recipe> mList = ProviderUtilities.getListRecipeFromContentProvider(mContext);
+        if (mList.size() == 0) {
+            if (isConnected) {
+                // Call network to get recipe list
+                new GetRecipesFromNetwork().execute();
+            } else {
+                Toast.makeText(mContext, "Aucune connexion pour récupérer la liste des recettes.", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            ArrayList<Recipe> recipeList = ProviderUtilities.getListRecipeFromContentProvider(mContext);
+            setupRecyclerView(mRecyclerView, recipeList);
         }
+
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        ArrayList<Recipe> recipeList = new ArrayList<>();
-        Cursor cursor = getContentResolver().query(RecipesProvider.ListRecipe.LIST_RECIPE, null, null, null, null);
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                Recipe recipe = ProviderUtilities.getRecipeFromCursor(cursor);
-
-                Cursor cursorStep = getContentResolver().query(RecipesProvider.ListStep.withRecipeId(recipe.getId()), null, null, null, null);
-                if (cursorStep != null) {
-                    while (cursorStep.moveToNext()) {
-                        Step step = ProviderUtilities.getStepFromCursor(cursorStep);
-                        recipe.getSteps().add(step);
-                    }
-                    cursorStep.close();
-                }
-
-                Cursor cursorIngredient = getContentResolver().query(RecipesProvider.ListIngredient.withRecipeId(recipe.getId()), null, null, null, null);
-                if (cursorIngredient != null) {
-                    while (cursorIngredient.moveToNext()) {
-                        Ingredient ingredient = ProviderUtilities.getIngredientFromCursor(cursorIngredient);
-                        recipe.getIngredients().add(ingredient);
-                    }
-                    cursorIngredient.close();
-                }
-
-                recipeList.add(recipe);
-            }
-            cursor.close();
-        }
-
-        recyclerView.setAdapter(new RecipeAdapter(recipeList));
+    private void setupRecyclerView(@NonNull RecyclerView recyclerView, ArrayList<Recipe> recipeArrayList) {
+        recyclerView.setAdapter(new RecipeAdapter(recipeArrayList));
 
         if (mIdlingResource != null) {
             mIdlingResource.setIdleState(true);
@@ -141,9 +117,17 @@ public class RecipeListActivity extends AppCompatActivity {
                 Type listType = new TypeToken<ArrayList<Recipe>>() {
                 }.getType();
                 try {
-                    ArrayList<Recipe> tempList = gson.fromJson(json, listType);
-                    ProviderUtilities.populateContentProviderFromJson(mContext, tempList);
-                    setupRecyclerView(mRecyclerView);
+                    final ArrayList<Recipe> tempList = gson.fromJson(json, listType);
+                    setupRecyclerView(mRecyclerView, tempList);
+
+                    Runnable runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            ProviderUtilities.populateContentProviderFromList(mContext, tempList);
+                        }
+                    };
+                    runnable.run();
+
                 } catch (JsonSyntaxException e) {
                     Log.e(TAG, e.getMessage(), e);
                     Toast.makeText(mContext, "Le chargement des recettes n'a pas fonctionné.", Toast.LENGTH_LONG).show();

@@ -31,13 +31,13 @@ public class StepDetailActivity extends AppCompatActivity {
                 case R.id.navigation_previous:
                     if (mStepIndex > 0) {
                         mStepIndex = mStepIndex - 1;
-                        loadStep(mRecipe.getSteps().get(mStepIndex));
+                        changeStep(mRecipe.getSteps().get(mStepIndex));
                     }
                     return true;
                 case R.id.navigation_next:
                     if (mStepIndex < mRecipe.getSteps().size() - 1) {
                         mStepIndex = mStepIndex + 1;
-                        loadStep(mRecipe.getSteps().get(mStepIndex));
+                        changeStep(mRecipe.getSteps().get(mStepIndex));
                     }
                     return true;
             }
@@ -70,12 +70,12 @@ public class StepDetailActivity extends AppCompatActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        loadStep(mRecipe.getSteps().get(mStepIndex));
+        changeStep(mRecipe.getSteps().get(mStepIndex));
     }
 
-    private void loadStep(Step step) {
+    private void changeStep(Step step) {
         Bundle arguments = new Bundle();
-        arguments.putParcelable(StepDetailFragment.ARG_STEP, step);
+        arguments.putParcelable(StepDetailFragment.ARG_STEP_INDEX, step);
         StepDetailFragment fragment = new StepDetailFragment();
         fragment.setArguments(arguments);
         getSupportFragmentManager().beginTransaction()

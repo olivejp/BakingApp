@@ -2,16 +2,22 @@ package com.orlanth23.bakingapp.fragment;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -35,6 +41,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.activity.RecipeListActivity;
+import com.orlanth23.bakingapp.domain.Recipe;
 import com.orlanth23.bakingapp.domain.Step;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
@@ -43,26 +50,52 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 public class StepDetailFragment extends Fragment implements ExoPlayer.EventListener {
 
     public static final String TAG = StepDetailFragment.class.getName();
-    public static final String ARG_STEP = "step";
+    public static final String ARG_STEP_INDEX = "step_index";
+    public static final String ARG_RECIPE = "recipe";
     private Step mStep;
     private SimpleExoPlayer mExoPlayer;
     private static MediaSessionCompat mMediaSession;
     private PlaybackStateCompat.Builder mStateBuilder;
     private NotificationManager mNotificationManager;
-
     private SimpleExoPlayerView mPlayerView;
+    private OnChangeStepListener mOnChangeStepListener;
+    private int mStepIndex;
+    private Recipe mRecipe;
+    private TextView mStepDescription;
+    private AppCompatActivity mAppCompatActivity;
+
+    public interface OnChangeStepListener {
+        void onChangeStep(int indexStep);
+    }
 
     public StepDetailFragment() {
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mOnChangeStepListener = (OnChangeStepListener) context;
+            mAppCompatActivity = (AppCompatActivity) context;
+        } catch (ClassCastException e) {
+            Log.e(StepDetailFragment.class.getName(), "StepDetailFragment ne peut être appeler que d'une AppCompatActivity qui implémente OnChangeStepListener", e);
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_STEP)) {
-            mStep = getArguments().getParcelable(ARG_STEP);
+        if (getArguments().containsKey(ARG_STEP_INDEX)) {
+            mStepIndex = getArguments().getInt(ARG_STEP_INDEX);
         }
+
+        if (getArguments().containsKey(ARG_RECIPE)) {
+            mRecipe = getArguments().getParcelable(ARG_RECIPE);
+        }
+
+        mStep = mRecipe.getSteps().get(mStepIndex);
+        mOnChangeStepListener.onChangeStep(mStepIndex);
 
         initializeMediaSession();
     }
@@ -72,23 +105,52 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_step_detail, container, false);
 
-        TextView mStepDescription = rootView.findViewById(R.id.step_description);
+        mStepDescription = rootView.findViewById(R.id.step_description);
         mPlayerView = rootView.findViewById(R.id.playerView);
 
-        if (mStepDescription != null) {
-            mStepDescription.setText(mStep.getDescription());
-        }
+        initializeViews();
 
-        // Initialize the player.
-        if (!TextUtils.isEmpty(mStep.getVideoURL())) {
-            initializePlayer(Uri.parse(mStep.getVideoURL()));
-        } else {
-            if (!TextUtils.isEmpty(mStep.getThumbnailURL())) {
-                initializePlayer(Uri.parse(mStep.getThumbnailURL()));
-            }
+        BottomNavigationView navigation = rootView.findViewById(R.id.navigation);
+        if (navigation != null) {
+            navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         }
 
         return rootView;
+    }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.navigation_previous:
+                    if (mStepIndex > 0) {
+                        mStepIndex = mStepIndex - 1;
+                        mStep = mRecipe.getSteps().get(mStepIndex);
+                        initializeViews();
+                    }
+                    return true;
+                case R.id.navigation_next:
+                    if (mStepIndex < mRecipe.getSteps().size() - 1) {
+                        mStepIndex = mStepIndex + 1;
+                        mStep = mRecipe.getSteps().get(mStepIndex);
+                        initializeViews();
+                    }
+                    return true;
+            }
+            return false;
+        }
+    };
+
+    private void initializeViews() {
+        mStepDescription.setText(mStep.getDescription());
+
+        // Initialize the player with the video URL
+        if (!TextUtils.isEmpty(mStep.getVideoURL())) {
+            initializePlayer(Uri.parse(mStep.getVideoURL()));
+        } else {
+            mPlayerView.setVisibility(View.GONE);
+        }
     }
 
     /**

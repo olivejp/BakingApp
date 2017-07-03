@@ -4,12 +4,13 @@
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
     card_view:cardCornerRadius="5dp"
-    android:layout_margin="10dp">
+    android:layout_margin="2dp">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@drawable/shape_step_adapter">
 
         <TextView
             android:id="@+id/recipe_id"
