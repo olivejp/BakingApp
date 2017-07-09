@@ -2,7 +2,6 @@ package com.orlanth23.bakingapp.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -67,9 +66,6 @@ public class RecipeDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
         ButterKnife.bind(this, rootView);
-
-        CollapsingToolbarLayout appBarLayout =  rootView.findViewById(R.id.toolbar_layout);
-        appBarLayout.setTitle(mRecipe.getName());
 
         updateFragment(mTwoPane, mRecipe);
 

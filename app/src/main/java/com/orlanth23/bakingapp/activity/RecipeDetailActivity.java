@@ -1,6 +1,7 @@
 package com.orlanth23.bakingapp.activity;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -8,12 +9,14 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.domain.Recipe;
 import com.orlanth23.bakingapp.domain.Step;
 import com.orlanth23.bakingapp.fragment.RecipeDetailFragment;
 import com.orlanth23.bakingapp.fragment.StepDetailFragment;
+import com.orlanth23.bakingapp.singleton.Constants;
 
 public class RecipeDetailActivity extends AppCompatActivity implements StepDetailFragment.OnChangeStepListener {
 
@@ -31,19 +34,11 @@ public class RecipeDetailActivity extends AppCompatActivity implements StepDetai
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
-        setSupportActionBar(toolbar);
 
         // Are we in two panel mode
         mTwoPane = false;
         if (findViewById(R.id.frame_step_container) != null) {
             mTwoPane = true;
-        }
-
-        // Show the Up button in the action bar.
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
         if (savedInstanceState != null) {
@@ -55,6 +50,19 @@ public class RecipeDetailActivity extends AppCompatActivity implements StepDetai
             }
         } else {
             mRecipe = getIntent().getParcelableExtra(ARG_RECIPE);
+        }
+
+        // Show the Up button in the action bar.
+        TextView textView = (TextView) findViewById(R.id.toolbar_title);
+        textView.setTypeface(Typeface.createFromAsset(getAssets(), Constants.DANCING_FONT));
+        textView.setText(mRecipe.getName());
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(null);
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
         if (mRecipeDetailFragment != null) {

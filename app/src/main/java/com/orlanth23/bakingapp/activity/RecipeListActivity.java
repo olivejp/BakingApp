@@ -1,6 +1,7 @@
 package com.orlanth23.bakingapp.activity;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -12,8 +13,8 @@ import android.support.test.espresso.IdlingResource;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -25,6 +26,7 @@ import com.orlanth23.bakingapp.adapter.RecipeAdapter;
 import com.orlanth23.bakingapp.domain.Recipe;
 import com.orlanth23.bakingapp.network.NetworkUtils;
 import com.orlanth23.bakingapp.provider.ProviderUtilities;
+import com.orlanth23.bakingapp.singleton.Constants;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -52,9 +54,9 @@ public class RecipeListActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_recipe_list);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setTitle(getTitle());
+        TextView textView = (TextView) findViewById(R.id.toolbar_title);
+        textView.setTypeface(Typeface.createFromAsset(getAssets(), Constants.DANCING_FONT));
+        textView.setText(getTitle());
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         mRecyclerView = (RecyclerView) findViewById(R.id.recipe_list);
