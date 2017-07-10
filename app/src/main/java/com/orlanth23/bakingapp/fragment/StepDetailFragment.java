@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -110,6 +111,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
 
         initializeViews();
 
+        // BottomNavigation enable navigation between steps
         BottomNavigationView navigation = rootView.findViewById(R.id.navigation);
         if (navigation != null) {
             navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -232,7 +234,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
             play_pause = "play";
         }
 
-
         NotificationCompat.Action playPauseAction = new NotificationCompat.Action(
                 icon, play_pause,
                 MediaButtonReceiver.buildMediaButtonPendingIntent(getContext(),
@@ -241,10 +242,10 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         PendingIntent contentPendingIntent = PendingIntent.getActivity
                 (getContext(), 0, new Intent(getContext(), RecipeListActivity.class), 0);
 
-        builder.setContentTitle("guess")
-                .setContentText("notification_text")
+        builder.setContentTitle(getActivity().getTitle())
+                .setContentText(mStep.getShortDescription())
                 .setContentIntent(contentPendingIntent)
-                .setSmallIcon(R.drawable.exo_controls_play)
+                .setSmallIcon(R.mipmap.ic_baking_app)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .addAction(playPauseAction)
                 .setStyle(new NotificationCompat.MediaStyle()
@@ -317,13 +318,17 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
 
     @Override
     public void onLoadingChanged(boolean isLoading) {
-
+        if (isLoading) {
+            mStateBuilder.setState(PlaybackStateCompat.STATE_PAUSED,
+                    mExoPlayer.getCurrentPosition(), 1f);
+        }
     }
 
 
     @Override
     public void onPlayerError(ExoPlaybackException error) {
-
+        Log.e(TAG, error.getMessage(), error);
+        Toast.makeText(getActivity(), "Une erreur est survenue sur Exoplayer.", Toast.LENGTH_LONG).show();
     }
 
     @Override

@@ -2,9 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/shape_step_adapter">
+    android:background="@color/colorPrimary">
 
     <TextView
+        android:text="Sample"
         android:id="@+id/step_short_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -12,5 +13,5 @@
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:textAppearance="?attr/textAppearanceListItem" />
+        android:textAppearance="@style/WhiteBoldTextView" />
 </LinearLayout>

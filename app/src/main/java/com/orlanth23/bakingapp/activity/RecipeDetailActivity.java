@@ -75,7 +75,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements StepDetai
                 .replace(R.id.frame_detail_recipe, mRecipeDetailFragment, TAG_RECIPE_DETAIL_FRAGMENT)
                 .commit();
 
-        if(mTwoPane && (mStepDetailFragment != null)){
+        if (mTwoPane && (mStepDetailFragment != null)) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.step_detail_container, mStepDetailFragment, TAG_STEP_DETAIL_FRAGMENT)
                     .commit();
@@ -108,6 +108,8 @@ public class RecipeDetailActivity extends AppCompatActivity implements StepDetai
 
     @Override
     public void onChangeStep(int index) {
-        mActiveStep = mRecipe.getSteps().get(index);
+        if (mRecipe != null) {
+            mActiveStep = mRecipe.getSteps().get(index);
+        }
     }
 }
