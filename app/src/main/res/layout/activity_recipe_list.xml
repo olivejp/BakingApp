@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/recipe_list_linear_layout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,7 +9,7 @@
     android:orientation="vertical"
     tools:context="com.orlanth23.bakingapp.activity.RecipeListActivity">
 
-    <include layout="@layout/custom_toolbar"/>
+    <include layout="@layout/custom_toolbar" />
 
     <FrameLayout
         android:id="@+id/frameLayout"
@@ -24,5 +25,14 @@
             app:layoutManager="GridLayoutManager"
             tools:context="com.orlanth23.bakingapp.activity.RecipeListActivity"
             tools:listitem="@layout/recipe_list_content" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/refresh_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:src="@android:drawable/ic_menu_rotate"
+            android:layout_margin="16dp"
+            android:layout_gravity="bottom|right"/>
     </FrameLayout>
 </LinearLayout>

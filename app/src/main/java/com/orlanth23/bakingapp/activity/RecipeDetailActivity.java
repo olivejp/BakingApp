@@ -86,7 +86,11 @@ public class RecipeDetailActivity extends AppCompatActivity implements StepDetai
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            NavUtils.navigateUpTo(this, new Intent(this, RecipeListActivity.class));
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                getSupportFragmentManager().popBackStack();
+            } else {
+                NavUtils.navigateUpTo(this, new Intent(this, RecipeListActivity.class));
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);

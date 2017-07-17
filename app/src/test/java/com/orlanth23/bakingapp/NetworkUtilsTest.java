@@ -2,8 +2,8 @@ package com.orlanth23.bakingapp;
 
 import android.text.TextUtils;
 
-import com.orlanth23.bakingapp.activity.RecipeListActivity;
 import com.orlanth23.bakingapp.network.NetworkUtils;
+import com.orlanth23.bakingapp.singleton.Constants;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,7 +13,7 @@ import static org.junit.Assert.assertTrue;
 public class NetworkUtilsTest {
 
     private String getJsonFromInternet() {
-        return NetworkUtils.makeServiceCall(RecipeListActivity.API_URL);
+        return NetworkUtils.makeServiceCall(Constants.API_URL);
     }
 
     @Test

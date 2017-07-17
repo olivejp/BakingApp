@@ -86,9 +86,12 @@ public class ProviderUtilities {
     }
 
     public static void populateContentProviderFromList(Context context, ArrayList<Recipe> recipeList) {
+
+        // Delete all the content
         context.getContentResolver().delete(RecipesProvider.ListIngredient.LIST_INGREDIENT, null, null);
         context.getContentResolver().delete(RecipesProvider.ListStep.LIST_STEP, null, null);
         context.getContentResolver().delete(RecipesProvider.ListRecipe.LIST_RECIPE, null, null);
+
         ContentValues contentValues = new ContentValues();
         for (Recipe recipe :
                 recipeList) {

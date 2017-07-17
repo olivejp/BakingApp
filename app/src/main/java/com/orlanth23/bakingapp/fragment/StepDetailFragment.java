@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
@@ -20,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,20 +42,22 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.activity.RecipeListActivity;
+import com.orlanth23.bakingapp.broadcast.NetworkReceiver;
 import com.orlanth23.bakingapp.domain.Recipe;
 import com.orlanth23.bakingapp.domain.Step;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 
-public class StepDetailFragment extends Fragment implements ExoPlayer.EventListener {
+public class StepDetailFragment extends Fragment implements ExoPlayer.EventListener, NetworkReceiver.NetworkChangeListener {
 
     public static final String TAG = StepDetailFragment.class.getName();
     public static final String ARG_STEP_INDEX = "step_index";
     public static final String ARG_RECIPE = "recipe";
+
+    private static MediaSessionCompat mMediaSession;
     private Step mStep;
     private SimpleExoPlayer mExoPlayer;
-    private static MediaSessionCompat mMediaSession;
     private PlaybackStateCompat.Builder mStateBuilder;
     private NotificationManager mNotificationManager;
     private SimpleExoPlayerView mPlayerView;
@@ -63,7 +65,26 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     private int mStepIndex;
     private Recipe mRecipe;
     private TextView mStepDescription;
-    private AppCompatActivity mAppCompatActivity;
+    private boolean isLandscapePhoneScreen;
+    private ScrollView mScrollStepDescription;
+    private NetworkReceiver mNetworkReceiver;
+    private boolean mIsConnected;
+
+    @Override
+    public void OnNetworkEnable() {
+        mIsConnected = true;
+        if (mPlayerView != null) {
+            initializeViews();
+        }
+    }
+
+    @Override
+    public void OnNetworkDisable() {
+        mIsConnected = false;
+        if (mPlayerView != null) {
+            initializeViews();
+        }
+    }
 
     public interface OnChangeStepListener {
         void onChangeStep(int indexStep);
@@ -77,10 +98,18 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         super.onAttach(context);
         try {
             mOnChangeStepListener = (OnChangeStepListener) context;
-            mAppCompatActivity = (AppCompatActivity) context;
         } catch (ClassCastException e) {
-            Log.e(StepDetailFragment.class.getName(), "StepDetailFragment ne peut être appeler que d'une AppCompatActivity qui implémente OnChangeStepListener", e);
+            Log.e(StepDetailFragment.class.getName(), "StepDetailFragment ne peut être appeler que d'une classe implémentant OnChangeStepListener", e);
         }
+
+        mNetworkReceiver = new NetworkReceiver(this);
+        context.registerReceiver(mNetworkReceiver, NetworkReceiver.CONNECTIVITY_CHANGE_INTENT_FILTER);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        getContext().unregisterReceiver(mNetworkReceiver);
     }
 
     @Override
@@ -95,7 +124,9 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
             mRecipe = getArguments().getParcelable(ARG_RECIPE);
         }
 
-        mStep = mRecipe.getSteps().get(mStepIndex);
+        if (mRecipe != null) {
+            mStep = mRecipe.getSteps().get(mStepIndex);
+        }
         mOnChangeStepListener.onChangeStep(mStepIndex);
 
         initializeMediaSession();
@@ -106,8 +137,15 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_step_detail, container, false);
 
+        // Check the internet connection
+        mIsConnected = mNetworkReceiver.checkConnection(getContext());
+
+        mScrollStepDescription = rootView.findViewById(R.id.scroll_step_description_land_phone);
         mStepDescription = rootView.findViewById(R.id.step_description);
-        mPlayerView = rootView.findViewById(R.id.playerView);
+        mPlayerView = rootView.findViewById(R.id.player_view);
+
+        // The scroll_step_description_land_phone is only available on the Landscape Phone Screen
+        isLandscapePhoneScreen = (mScrollStepDescription != null);
 
         initializeViews();
 
@@ -124,17 +162,18 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
             switch (item.getItemId()) {
                 case R.id.navigation_previous:
                     if (mStepIndex > 0) {
-                        mStepIndex = mStepIndex - 1;
+                        mStepIndex--;
                         mStep = mRecipe.getSteps().get(mStepIndex);
                         initializeViews();
                     }
                     return true;
                 case R.id.navigation_next:
                     if (mStepIndex < mRecipe.getSteps().size() - 1) {
-                        mStepIndex = mStepIndex + 1;
+                        mStepIndex++;
                         mStep = mRecipe.getSteps().get(mStepIndex);
                         initializeViews();
                     }
@@ -145,15 +184,24 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     };
 
     private void initializeViews() {
-        mStepDescription.setText(mStep.getDescription());
-
         // Initialize the player with the video URL
-        if (!TextUtils.isEmpty(mStep.getVideoURL())) {
+        if (mIsConnected && !TextUtils.isEmpty(mStep.getVideoURL())) {
+            mPlayerView.setVisibility(View.VISIBLE);
             initializePlayer(Uri.parse(mStep.getVideoURL()));
+
+            // In Phone screen, exoplayer is fullscreen, so there is no step description
+            if (isLandscapePhoneScreen) {
+                mScrollStepDescription.setVisibility(View.GONE);
+            } else {
+                mStepDescription.setText(mStep.getDescription());
+            }
         } else {
             mPlayerView.setVisibility(View.GONE);
+            releasePlayer();
+            mStepDescription.setText(mStep.getDescription());
         }
     }
+
 
     /**
      * Initializes the Media Session to be enabled with media buttons, transport controls, callbacks
@@ -187,7 +235,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
 
         // Start the Media Session since the activity is active.
         mMediaSession.setActive(true);
-
     }
 
     /**
@@ -239,10 +286,11 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
                 MediaButtonReceiver.buildMediaButtonPendingIntent(getContext(),
                         PlaybackStateCompat.ACTION_PLAY_PAUSE));
 
+        // Pending Intent that return to the RecipeListActivity
         PendingIntent contentPendingIntent = PendingIntent.getActivity
                 (getContext(), 0, new Intent(getContext(), RecipeListActivity.class), 0);
 
-        builder.setContentTitle(getActivity().getTitle())
+        builder.setContentTitle(mRecipe.getName())
                 .setContentText(mStep.getShortDescription())
                 .setContentIntent(contentPendingIntent)
                 .setSmallIcon(R.mipmap.ic_baking_app)
@@ -335,6 +383,4 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     public void onPositionDiscontinuity() {
 
     }
-
-
 }

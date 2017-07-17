@@ -2,18 +2,18 @@ package com.orlanth23.bakingapp.activity;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+import android.support.design.widget.FloatingActionButton;
 import android.support.test.espresso.IdlingResource;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +23,7 @@ import com.google.gson.reflect.TypeToken;
 import com.orlanth23.bakingapp.IdlingResource.SimpleIdlingResource;
 import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.adapter.RecipeAdapter;
+import com.orlanth23.bakingapp.broadcast.NetworkReceiver;
 import com.orlanth23.bakingapp.domain.Recipe;
 import com.orlanth23.bakingapp.network.NetworkUtils;
 import com.orlanth23.bakingapp.provider.ProviderUtilities;
@@ -31,14 +32,16 @@ import com.orlanth23.bakingapp.singleton.Constants;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-public class RecipeListActivity extends AppCompatActivity {
+public class RecipeListActivity extends AppCompatActivity implements NetworkReceiver.NetworkChangeListener {
 
     private static final String TAG = RecipeListActivity.class.getName();
-    public static final String API_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
 
     private Context mContext = this;
     private RecyclerView mRecyclerView;
+    private FloatingActionButton mRefreshButton;
+    private static final int NUMBER_GRID_COLUMN = 3;
     private boolean isConnected;
+    private NetworkReceiver mNetworkReceiver;
 
     // The Idling Resource which will be null in production.
     @Nullable
@@ -52,39 +55,41 @@ public class RecipeListActivity extends AppCompatActivity {
             mIdlingResource.setIdleState(false);
         }
 
+        mNetworkReceiver = new NetworkReceiver(this);
+        registerReceiver(mNetworkReceiver, NetworkReceiver.CONNECTIVITY_CHANGE_INTENT_FILTER);
+
         setContentView(R.layout.activity_recipe_list);
 
         TextView textView = (TextView) findViewById(R.id.toolbar_title);
+        mRefreshButton = (FloatingActionButton) findViewById(R.id.refresh_button);
+
+        mRefreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                refreshData();
+            }
+        });
+
         textView.setTypeface(Typeface.createFromAsset(getAssets(), Constants.DANCING_FONT));
         textView.setText(getTitle());
 
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, NUMBER_GRID_COLUMN);
         mRecyclerView = (RecyclerView) findViewById(R.id.recipe_list);
         mRecyclerView.setLayoutManager(gridLayoutManager);
 
-
-        assert mRecyclerView != null;
-
-        ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        isConnected = activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
-
-        ArrayList<Recipe> mList = ProviderUtilities.getListRecipeFromContentProvider(mContext);
-        if (mList.size() == 0) {
-            if (isConnected) {
-                // Call network to get recipe list
-                new GetRecipesFromNetwork().execute();
-            } else {
-                Toast.makeText(mContext, "Aucune connexion pour récupérer la liste des recettes.", Toast.LENGTH_LONG).show();
-            }
-        } else {
-            ArrayList<Recipe> recipeList = ProviderUtilities.getListRecipeFromContentProvider(mContext);
+        // Récupération des données à partir du contentProvider
+        ArrayList<Recipe> recipeList = ProviderUtilities.getListRecipeFromContentProvider(this);
+        if (recipeList.size() > 0) {
             setupRecyclerView(mRecyclerView, recipeList);
+        } else {
+            if (mNetworkReceiver.checkConnection(this)) {
+                refreshData();
+            } else {
+                Toast.makeText(this, "Pas de connexion réseau pour récupérer les recettes.", Toast.LENGTH_LONG).show();
+            }
         }
 
+        assert mRecyclerView != null;
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView, ArrayList<Recipe> recipeArrayList) {
@@ -105,10 +110,32 @@ public class RecipeListActivity extends AppCompatActivity {
         return mIdlingResource;
     }
 
+    private void refreshData() {
+        new GetRecipesFromNetwork().execute();
+    }
+
+    @Override
+    public void OnNetworkEnable() {
+        mRefreshButton.setVisibility(View.VISIBLE);
+        isConnected = true;
+    }
+
+    @Override
+    public void OnNetworkDisable() {
+        mRefreshButton.setVisibility(View.GONE);
+        isConnected = false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mNetworkReceiver);
+    }
+
     private class GetRecipesFromNetwork extends AsyncTask<Void, Void, String> {
         @Override
         protected String doInBackground(Void... voids) {
-            return NetworkUtils.makeServiceCall(API_URL);
+            return NetworkUtils.makeServiceCall(Constants.API_URL);
         }
 
         @Override
