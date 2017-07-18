@@ -2,6 +2,7 @@ package com.orlanth23.bakingapp.fragment;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -109,7 +110,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     @Override
     public void onDetach() {
         super.onDetach();
-        getContext().unregisterReceiver(mNetworkReceiver);
+        getActivity().unregisterReceiver(mNetworkReceiver);
     }
 
     @Override
@@ -138,7 +139,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         View rootView = inflater.inflate(R.layout.fragment_step_detail, container, false);
 
         // Check the internet connection
-        mIsConnected = mNetworkReceiver.checkConnection(getContext());
+        mIsConnected = mNetworkReceiver.checkConnection(getActivity());
 
         mScrollStepDescription = rootView.findViewById(R.id.scroll_step_description_land_phone);
         mStepDescription = rootView.findViewById(R.id.step_description);
@@ -225,6 +226,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
                 .setActions(
                         PlaybackStateCompat.ACTION_PLAY |
                                 PlaybackStateCompat.ACTION_PAUSE |
+                                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
                                 PlaybackStateCompat.ACTION_PLAY_PAUSE);
 
         mMediaSession.setPlaybackState(mStateBuilder.build());
@@ -255,8 +257,9 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
 
             // Prepare the MediaSource.
             String userAgent = Util.getUserAgent(getActivity(), getString(R.string.app_name));
+
             MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
-                    getContext(), userAgent), new DefaultExtractorsFactory(), null, null);
+                    getActivity(), userAgent), new DefaultExtractorsFactory(), null, null);
             mExoPlayer.prepare(mediaSource);
             mExoPlayer.setPlayWhenReady(true);
         }
@@ -269,7 +272,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
      * @param state The PlaybackState of the MediaSession.
      */
     private void showNotification(PlaybackStateCompat state) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext());
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity());
 
         int icon;
         String play_pause;
@@ -283,12 +286,12 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
 
         NotificationCompat.Action playPauseAction = new NotificationCompat.Action(
                 icon, play_pause,
-                MediaButtonReceiver.buildMediaButtonPendingIntent(getContext(),
+                MediaButtonReceiver.buildMediaButtonPendingIntent(getActivity(),
                         PlaybackStateCompat.ACTION_PLAY_PAUSE));
 
         // Pending Intent that return to the RecipeListActivity
         PendingIntent contentPendingIntent = PendingIntent.getActivity
-                (getContext(), 0, new Intent(getContext(), RecipeListActivity.class), 0);
+                (getActivity(), 0, new Intent(getActivity(), RecipeListActivity.class), 0);
 
         builder.setContentTitle(mRecipe.getName())
                 .setContentText(mStep.getShortDescription())
@@ -301,7 +304,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
                         .setShowActionsInCompactView(0));
 
 
-        mNotificationManager = (NotificationManager) getContext().getSystemService(NOTIFICATION_SERVICE);
+        mNotificationManager = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
         mNotificationManager.notify(0, builder.build());
     }
 
@@ -382,5 +385,21 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     @Override
     public void onPositionDiscontinuity() {
 
+    }
+
+
+
+    /**
+     * Broadcast Receiver registered to receive the MEDIA_BUTTON intent coming from clients.
+     */
+    public static class MediaReceiver extends BroadcastReceiver {
+
+        public MediaReceiver() {
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            MediaButtonReceiver.handleIntent(mMediaSession, intent);
+        }
     }
 }

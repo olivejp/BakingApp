@@ -3,7 +3,6 @@ package com.orlanth23.bakingapp.activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -26,7 +25,6 @@ public class RecipeDetailActivity extends AppCompatActivity implements StepDetai
     public static final String ARG_RECIPE = "ARG_RECIPE";
     private RecipeDetailFragment mRecipeDetailFragment;
     private StepDetailFragment mStepDetailFragment;
-    private Step mActiveStep;
     private boolean mTwoPane;
     private Recipe mRecipe;
 
@@ -36,18 +34,12 @@ public class RecipeDetailActivity extends AppCompatActivity implements StepDetai
         setContentView(R.layout.activity_recipe_detail);
 
         // Are we in two panel mode
-        mTwoPane = false;
-        if (findViewById(R.id.frame_step_container) != null) {
-            mTwoPane = true;
-        }
+        mTwoPane = findViewById(R.id.frame_step_container) != null;
 
         if (savedInstanceState != null) {
             mRecipe = savedInstanceState.getParcelable(TAG_RECIPE);
             mRecipeDetailFragment = (RecipeDetailFragment) getSupportFragmentManager().getFragment(savedInstanceState, TAG_RECIPE_DETAIL_FRAGMENT);
-            Fragment fragment = getSupportFragmentManager().getFragment(savedInstanceState, TAG_STEP_DETAIL_FRAGMENT);
-            if (fragment != null) {
-                mStepDetailFragment = (StepDetailFragment) fragment;
-            }
+            mStepDetailFragment = (StepDetailFragment) getSupportFragmentManager().getFragment(savedInstanceState, TAG_STEP_DETAIL_FRAGMENT);
         } else {
             mRecipe = getIntent().getParcelableExtra(ARG_RECIPE);
         }
@@ -100,20 +92,19 @@ public class RecipeDetailActivity extends AppCompatActivity implements StepDetai
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(TAG_RECIPE, mRecipe);
+
         getSupportFragmentManager().putFragment(outState, TAG_RECIPE_DETAIL_FRAGMENT, mRecipeDetailFragment);
-        if (mTwoPane) {
-            Fragment fragment = getSupportFragmentManager().findFragmentByTag(TAG_STEP_DETAIL_FRAGMENT);
-            if (fragment != null) {
-                mStepDetailFragment = (StepDetailFragment) fragment;
-                getSupportFragmentManager().putFragment(outState, TAG_STEP_DETAIL_FRAGMENT, mStepDetailFragment);
-            }
+
+        mStepDetailFragment = (StepDetailFragment) getSupportFragmentManager().findFragmentByTag(TAG_STEP_DETAIL_FRAGMENT);
+        if (mStepDetailFragment != null) {
+            getSupportFragmentManager().putFragment(outState, TAG_STEP_DETAIL_FRAGMENT, mStepDetailFragment);
         }
     }
 
     @Override
     public void onChangeStep(int index) {
         if (mRecipe != null) {
-            mActiveStep = mRecipe.getSteps().get(index);
+            Step mActiveStep = mRecipe.getSteps().get(index);
         }
     }
 }

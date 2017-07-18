@@ -49,6 +49,11 @@
             android:authorities="com.orlanth23.bakingapp.RecipesProvider"
             android:name=".provider.generated.RecipesProvider"
             android:exported="false"/>
+        <receiver android:name=".fragment.StepDetailFragment$MediaReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
