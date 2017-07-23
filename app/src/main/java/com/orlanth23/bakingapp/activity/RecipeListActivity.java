@@ -40,20 +40,27 @@ public class RecipeListActivity extends AppCompatActivity implements NetworkRece
     private RecyclerView mRecyclerView;
     private FloatingActionButton mRefreshButton;
     private static final int NUMBER_GRID_COLUMN = 3;
-    private boolean isConnected;
     private NetworkReceiver mNetworkReceiver;
 
     // The Idling Resource which will be null in production.
     @Nullable
     private SimpleIdlingResource mIdlingResource;
 
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new SimpleIdlingResource();
+            mIdlingResource.setIdleState(false);
+        }
+        return mIdlingResource;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (mIdlingResource != null) {
-            mIdlingResource.setIdleState(false);
-        }
+        getIdlingResource();
 
         mNetworkReceiver = new NetworkReceiver(this);
         registerReceiver(mNetworkReceiver, NetworkReceiver.CONNECTIVITY_CHANGE_INTENT_FILTER);
@@ -66,7 +73,7 @@ public class RecipeListActivity extends AppCompatActivity implements NetworkRece
         mRefreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                refreshData();
+                getRecipeListFromTheNet();
             }
         });
 
@@ -77,15 +84,18 @@ public class RecipeListActivity extends AppCompatActivity implements NetworkRece
         mRecyclerView = (RecyclerView) findViewById(R.id.recipe_list);
         mRecyclerView.setLayoutManager(gridLayoutManager);
 
-        // Récupération des données à partir du contentProvider
+        // Get Recipe List from contentProvider
         ArrayList<Recipe> recipeList = ProviderUtilities.getListRecipeFromContentProvider(this);
         if (recipeList.size() > 0) {
             setupRecyclerView(mRecyclerView, recipeList);
+            if (mIdlingResource != null) {
+                mIdlingResource.setIdleState(true);
+            }
         } else {
             if (mNetworkReceiver.checkConnection(this)) {
-                refreshData();
+                getRecipeListFromTheNet();
             } else {
-                Toast.makeText(this, "Pas de connexion réseau pour récupérer les recettes.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "No connection to get the Recipe List from the net", Toast.LENGTH_LONG).show();
             }
         }
 
@@ -94,36 +104,20 @@ public class RecipeListActivity extends AppCompatActivity implements NetworkRece
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView, ArrayList<Recipe> recipeArrayList) {
         recyclerView.setAdapter(new RecipeAdapter(recipeArrayList));
-
-        if (mIdlingResource != null) {
-            mIdlingResource.setIdleState(true);
-        }
     }
 
-    @VisibleForTesting
-    @NonNull
-    public IdlingResource getIdlingResource() {
-        if (mIdlingResource == null) {
-            mIdlingResource = new SimpleIdlingResource();
-            mIdlingResource.setIdleState(false);
-        }
-        return mIdlingResource;
-    }
-
-    private void refreshData() {
+    private void getRecipeListFromTheNet() {
         new GetRecipesFromNetwork().execute();
     }
 
     @Override
     public void OnNetworkEnable() {
         mRefreshButton.setVisibility(View.VISIBLE);
-        isConnected = true;
     }
 
     @Override
     public void OnNetworkDisable() {
         mRefreshButton.setVisibility(View.GONE);
-        isConnected = false;
     }
 
     @Override
@@ -153,13 +147,16 @@ public class RecipeListActivity extends AppCompatActivity implements NetworkRece
                         @Override
                         public void run() {
                             ProviderUtilities.populateContentProviderFromList(mContext, tempList);
+                            if (mIdlingResource != null) {
+                                mIdlingResource.setIdleState(true);
+                            }
                         }
                     };
                     runnable.run();
 
                 } catch (JsonSyntaxException e) {
                     Log.e(TAG, e.getMessage(), e);
-                    Toast.makeText(mContext, "Le chargement des recettes n'a pas fonctionné.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(mContext, "Error while getting the recipe list.", Toast.LENGTH_LONG).show();
                 }
             }
         }

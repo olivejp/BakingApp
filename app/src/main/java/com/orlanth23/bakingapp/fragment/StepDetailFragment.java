@@ -58,18 +58,20 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
 
     private static MediaSessionCompat mMediaSession;
     private Step mStep;
-    private SimpleExoPlayer mExoPlayer;
-    private PlaybackStateCompat.Builder mStateBuilder;
-    private NotificationManager mNotificationManager;
-    private SimpleExoPlayerView mPlayerView;
-    private OnChangeStepListener mOnChangeStepListener;
     private int mStepIndex;
     private Recipe mRecipe;
-    private TextView mStepDescription;
+    private SimpleExoPlayer mExoPlayer;
+    private boolean mIsConnected;
     private boolean isLandscapePhoneScreen;
+    private PlaybackStateCompat.Builder mStateBuilder;
+    private NotificationManager mNotificationManager;
+
+    private SimpleExoPlayerView mPlayerView;
+    private OnChangeStepListener mOnChangeStepListener;
+    private TextView mStepDescription;
     private ScrollView mScrollStepDescription;
     private NetworkReceiver mNetworkReceiver;
-    private boolean mIsConnected;
+
 
     @Override
     public void OnNetworkEnable() {
@@ -100,7 +102,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         try {
             mOnChangeStepListener = (OnChangeStepListener) context;
         } catch (ClassCastException e) {
-            Log.e(StepDetailFragment.class.getName(), "StepDetailFragment ne peut être appeler que d'une classe implémentant OnChangeStepListener", e);
+            Log.e(StepDetailFragment.class.getName(), "StepDetailFragment could only be call by a OnChangeStepListener", e);
         }
 
         mNetworkReceiver = new NetworkReceiver(this);
@@ -203,11 +205,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         }
     }
 
-
-    /**
-     * Initializes the Media Session to be enabled with media buttons, transport controls, callbacks
-     * and media controller.
-     */
     private void initializeMediaSession() {
 
         // Create a MediaSessionCompat.
@@ -239,11 +236,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         mMediaSession.setActive(true);
     }
 
-    /**
-     * Initialize ExoPlayer.
-     *
-     * @param mediaUri The URI of the sample to play.
-     */
     private void initializePlayer(Uri mediaUri) {
         if (mExoPlayer == null) {
             // Create an instance of the ExoPlayer.
@@ -265,12 +257,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         }
     }
 
-    /**
-     * Shows Media Style notification, with actions that depend on the current MediaSession
-     * PlaybackState.
-     *
-     * @param state The PlaybackState of the MediaSession.
-     */
     private void showNotification(PlaybackStateCompat state) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity());
 
@@ -308,9 +294,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         mNotificationManager.notify(0, builder.build());
     }
 
-    /**
-     * Release ExoPlayer.
-     */
     private void releasePlayer() {
         if (mNotificationManager != null) {
             mNotificationManager.cancelAll();
@@ -329,9 +312,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         mMediaSession.setActive(false);
     }
 
-    /**
-     * Media Session Callbacks, where all external clients control the player.
-     */
     private class MySessionCallback extends MediaSessionCompat.Callback {
         @Override
         public void onPlay() {
@@ -379,7 +359,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     @Override
     public void onPlayerError(ExoPlaybackException error) {
         Log.e(TAG, error.getMessage(), error);
-        Toast.makeText(getActivity(), "Une erreur est survenue sur Exoplayer.", Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), "An error occurs on the Exoplayer.", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -387,11 +367,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
 
     }
 
-
-
-    /**
-     * Broadcast Receiver registered to receive the MEDIA_BUTTON intent coming from clients.
-     */
     public static class MediaReceiver extends BroadcastReceiver {
 
         public MediaReceiver() {

@@ -41,14 +41,21 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:' + rootProject.espressoVersion, {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    androidTestCompile('com.android.support.test.espresso:espresso-contrib:2.2') {
+        // Necessary to avoid version conflicts
+        exclude group: 'com.android.support', module: 'appcompat'
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude module: 'recyclerview-v7'
+    }
 
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.google.android.exoplayer:exoplayer:r2.2.0'
     compile 'com.jakewharton:butterknife:8.6.0'
     compile 'com.google.code.gson:gson:2.7'
-    compile 'com.android.support:support-v4:26.+'
-    compile 'com.android.support:design:26.+'
-    compile 'com.android.support:support-vector-drawable:26.+'
+    compile 'com.android.support:support-v4:26.0.0-beta2'
+    compile 'com.android.support:design:26.0.0-beta2'
+    compile 'com.android.support:support-vector-drawable:26.0.0-beta2'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
 }

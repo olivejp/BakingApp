@@ -23,7 +23,6 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -35,15 +34,6 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.orlanth23.bakingapp.activity.RecipeListActivity" />
-        </activity>
-        <activity
-            android:name=".activity.StepDetailActivity"
-            android:label="@string/title_step_detail"
-            android:parentActivityName=".activity.RecipeDetailActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.orlanth23.bakingapp.activity.RecipeDetailActivity" />
         </activity>
         <provider
             android:authorities="com.orlanth23.bakingapp.RecipesProvider"

@@ -10,7 +10,6 @@ import android.net.NetworkInfo;
 /**
  * Created by orlanth23 on 13/07/2017.
  */
-
 public class NetworkReceiver extends BroadcastReceiver {
 
     public static final IntentFilter CONNECTIVITY_CHANGE_INTENT_FILTER = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");

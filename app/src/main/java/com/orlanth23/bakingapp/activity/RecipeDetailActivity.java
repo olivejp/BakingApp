@@ -25,7 +25,6 @@ public class RecipeDetailActivity extends AppCompatActivity implements StepDetai
     public static final String ARG_RECIPE = "ARG_RECIPE";
     private RecipeDetailFragment mRecipeDetailFragment;
     private StepDetailFragment mStepDetailFragment;
-    private boolean mTwoPane;
     private Recipe mRecipe;
 
     @Override
@@ -34,7 +33,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements StepDetai
         setContentView(R.layout.activity_recipe_detail);
 
         // Are we in two panel mode
-        mTwoPane = findViewById(R.id.frame_step_container) != null;
+        boolean mTwoPane = findViewById(R.id.frame_step_container) != null;
 
         if (savedInstanceState != null) {
             mRecipe = savedInstanceState.getParcelable(TAG_RECIPE);
@@ -42,6 +41,16 @@ public class RecipeDetailActivity extends AppCompatActivity implements StepDetai
             mStepDetailFragment = (StepDetailFragment) getSupportFragmentManager().getFragment(savedInstanceState, TAG_STEP_DETAIL_FRAGMENT);
         } else {
             mRecipe = getIntent().getParcelableExtra(ARG_RECIPE);
+        }
+
+        if (mRecipeDetailFragment != null) {
+            mRecipeDetailFragment.updateFragment(mTwoPane, mRecipe);
+        } else {
+            mRecipeDetailFragment = RecipeDetailFragment.newInstance(mRecipe, mTwoPane);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.frame_detail_recipe, mRecipeDetailFragment, TAG_RECIPE_DETAIL_FRAGMENT)
+                    .commit();
         }
 
         // Show the Up button in the action bar.
@@ -55,22 +64,6 @@ public class RecipeDetailActivity extends AppCompatActivity implements StepDetai
         if (actionBar != null) {
             actionBar.setTitle(null);
             actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-
-        if (mRecipeDetailFragment != null) {
-            mRecipeDetailFragment.updateFragment(mTwoPane, mRecipe);
-        } else {
-            mRecipeDetailFragment = RecipeDetailFragment.newInstance(mRecipe, mTwoPane);
-        }
-
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.frame_detail_recipe, mRecipeDetailFragment, TAG_RECIPE_DETAIL_FRAGMENT)
-                .commit();
-
-        if (mTwoPane && (mStepDetailFragment != null)) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.step_detail_container, mStepDetailFragment, TAG_STEP_DETAIL_FRAGMENT)
-                    .commit();
         }
     }
 
