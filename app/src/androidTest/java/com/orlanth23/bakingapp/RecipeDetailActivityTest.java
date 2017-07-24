@@ -32,7 +32,6 @@ public class RecipeDetailActivityTest {
     public void clickOn() throws Exception {
         onView(withId(R.id.recipe_list)).perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));
 
-        // Checks that the OrderActivity opens with the correct tea name displayed
         onView(withId(R.id.frame_detail_recipe)).check(matches(isDisplayed()));
     }
 }

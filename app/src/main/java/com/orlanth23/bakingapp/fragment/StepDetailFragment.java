@@ -67,7 +67,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     private NotificationManager mNotificationManager;
 
     private SimpleExoPlayerView mPlayerView;
-    private OnChangeStepListener mOnChangeStepListener;
     private TextView mStepDescription;
     private ScrollView mScrollStepDescription;
     private NetworkReceiver mNetworkReceiver;
@@ -89,22 +88,12 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         }
     }
 
-    public interface OnChangeStepListener {
-        void onChangeStep(int indexStep);
-    }
-
     public StepDetailFragment() {
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            mOnChangeStepListener = (OnChangeStepListener) context;
-        } catch (ClassCastException e) {
-            Log.e(StepDetailFragment.class.getName(), "StepDetailFragment could only be call by a OnChangeStepListener", e);
-        }
-
         mNetworkReceiver = new NetworkReceiver(this);
         context.registerReceiver(mNetworkReceiver, NetworkReceiver.CONNECTIVITY_CHANGE_INTENT_FILTER);
     }
@@ -130,7 +119,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         if (mRecipe != null) {
             mStep = mRecipe.getSteps().get(mStepIndex);
         }
-        mOnChangeStepListener.onChangeStep(mStepIndex);
 
         initializeMediaSession();
     }
@@ -359,7 +347,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     @Override
     public void onPlayerError(ExoPlaybackException error) {
         Log.e(TAG, error.getMessage(), error);
-        Toast.makeText(getActivity(), "An error occurs on the Exoplayer.", Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), R.string.error_on_exoplayer, Toast.LENGTH_LONG).show();
     }
 
     @Override

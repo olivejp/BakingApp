@@ -19,20 +19,20 @@ package com.orlanth23.bakingapp;
 
 import junit.framework.Assert;
 
-public abstract class PollingCheck {
+abstract class PollingCheck {
     private static final long TIME_SLICE = 70;
     private long mTimeout = 4000;
 
     public PollingCheck() {
     }
 
-    public PollingCheck(long timeout) {
+    PollingCheck(long timeout) {
         mTimeout = timeout;
     }
 
     protected abstract boolean check();
 
-    public void run() {
+    void run() {
         if (check()) {
             return;
         }

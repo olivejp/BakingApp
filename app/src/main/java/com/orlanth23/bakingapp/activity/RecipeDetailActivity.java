@@ -12,12 +12,11 @@ import android.widget.TextView;
 
 import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.domain.Recipe;
-import com.orlanth23.bakingapp.domain.Step;
 import com.orlanth23.bakingapp.fragment.RecipeDetailFragment;
 import com.orlanth23.bakingapp.fragment.StepDetailFragment;
 import com.orlanth23.bakingapp.singleton.Constants;
 
-public class RecipeDetailActivity extends AppCompatActivity implements StepDetailFragment.OnChangeStepListener {
+public class RecipeDetailActivity extends AppCompatActivity {
 
     private static final String TAG_RECIPE_DETAIL_FRAGMENT = "TAG_RECIPE_DETAIL_FRAGMENT";
     public static final String TAG_STEP_DETAIL_FRAGMENT = "TAG_STEP_DETAIL_FRAGMENT";
@@ -54,16 +53,18 @@ public class RecipeDetailActivity extends AppCompatActivity implements StepDetai
         }
 
         // Show the Up button in the action bar.
-        TextView textView = (TextView) findViewById(R.id.toolbar_title);
-        textView.setTypeface(Typeface.createFromAsset(getAssets(), Constants.DANCING_FONT));
-        textView.setText(mRecipe.getName());
+        if (findViewById(R.id.toolbar_title) != null) {
+            TextView textView = (TextView) findViewById(R.id.toolbar_title);
+            textView.setTypeface(Typeface.createFromAsset(getAssets(), Constants.DANCING_FONT));
+            textView.setText(mRecipe.getName());
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(null);
-            actionBar.setDisplayHomeAsUpEnabled(true);
+            Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
+            setSupportActionBar(toolbar);
+            ActionBar actionBar = getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setTitle(null);
+                actionBar.setDisplayHomeAsUpEnabled(true);
+            }
         }
     }
 
@@ -91,13 +92,6 @@ public class RecipeDetailActivity extends AppCompatActivity implements StepDetai
         mStepDetailFragment = (StepDetailFragment) getSupportFragmentManager().findFragmentByTag(TAG_STEP_DETAIL_FRAGMENT);
         if (mStepDetailFragment != null) {
             getSupportFragmentManager().putFragment(outState, TAG_STEP_DETAIL_FRAGMENT, mStepDetailFragment);
-        }
-    }
-
-    @Override
-    public void onChangeStep(int index) {
-        if (mRecipe != null) {
-            Step mActiveStep = mRecipe.getSteps().get(index);
         }
     }
 }

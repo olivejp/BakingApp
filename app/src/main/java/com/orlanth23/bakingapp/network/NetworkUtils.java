@@ -17,7 +17,6 @@ import java.net.URL;
  * Based on : http://www.androidhive.info/2012/01/android-json-parsing-tutorial/
  * Thanks to Ravi TAMADA
  */
-
 public class NetworkUtils {
 
     private static final String TAG = "NetworkUtils";

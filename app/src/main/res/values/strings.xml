@@ -8,4 +8,9 @@
     <string name="title_dashboard">Previous</string>
     <string name="title_notifications">Notifications</string>
     <string name="title_activity_bottom_navigation">BottomNavigationActivity</string>
+    <string name="no_connection_to_get_recipe_list">No connection to get the Recipe List from the net</string>
+    <string name="error_while_getting_recipe_list">Error while getting the recipe list.</string>
+    <string name="recipedetailfragment_need_appcompatactivity">RecipeDetailFragment could only be call by a AppCompatActivity</string>
+    <string name="error_on_exoplayer">An error occurs on the Exoplayer.</string>
+    <string name="stepdetailfragment_call_by_onchangesteplistener">StepDetailFragment could only be call by a OnChangeStepListener</string>
 </resources>

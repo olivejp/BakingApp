@@ -19,21 +19,21 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
-public class TestUtilities {
+class TestUtilities {
 
-    public static final String STEP_DESRIPTION = "description";
-    public static final String STEP_SHORT_DESRIPTION = "shortDescription";
-    public static final String STEP_VIDEO_URL = "videoUrl";
-    public static final String STEP_THUMBNAIL_URL = "thumbnailUrl";
+    private static final String STEP_DESRIPTION = "description";
+    private static final String STEP_SHORT_DESRIPTION = "shortDescription";
+    private static final String STEP_VIDEO_URL = "videoUrl";
+    private static final String STEP_THUMBNAIL_URL = "thumbnailUrl";
 
 
-    public static final String RECIPE_IMAGE = "recipeImage";
-    public static final String RECIPE_NAME = "recipeName";
-    public static final String RECIPE_SERVINGS = "recipeServings";
+    private static final String RECIPE_IMAGE = "recipeImage";
+    private static final String RECIPE_NAME = "recipeName";
+    private static final String RECIPE_SERVINGS = "recipeServings";
 
-    public static final String INGREDIENT_INGREDIENT = "ingredient";
-    public static final String INGREDIENT_MEASURE = "measure";
-    public static final double INGREDIENT_QUANTITY = 2.5;
+    private static final String INGREDIENT_INGREDIENT = "ingredient";
+    private static final String INGREDIENT_MEASURE = "measure";
+    private static final double INGREDIENT_QUANTITY = 2.5;
 
 
     static void validateCursor(String error, Cursor valueCursor, ContentValues expectedValues) {
@@ -42,7 +42,7 @@ public class TestUtilities {
         valueCursor.close();
     }
 
-    static void validateCurrentRecord(String error, Cursor valueCursor, ContentValues expectedValues) {
+    private static void validateCurrentRecord(String error, Cursor valueCursor, ContentValues expectedValues) {
         Set<Map.Entry<String, Object>> valueSet = expectedValues.valueSet();
         for (Map.Entry<String, Object> entry : valueSet) {
             String columnName = entry.getKey();
@@ -127,7 +127,7 @@ public class TestUtilities {
             mContentChanged = true;
         }
 
-        public void waitForNotificationOrFail() {
+        void waitForNotificationOrFail() {
             // Note: The PollingCheck class is taken from the Android CTS (Compatibility Test Suite).
             // It's useful to look at the Android CTS source for ideas on how to test your Android
             // applications.  The reason that PollingCheck works is that, by default, the JUnit

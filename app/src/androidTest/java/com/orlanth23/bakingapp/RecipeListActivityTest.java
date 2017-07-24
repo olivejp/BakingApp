@@ -22,10 +22,9 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 /**
- * Instrumentation test, which will execute on an Android device.
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * Created by orlanth23 on 01/07/2017.
  */
+
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class RecipeListActivityTest {
@@ -35,23 +34,19 @@ public class RecipeListActivityTest {
 
     private IdlingResource mIdlingResource;
 
-    // Registers any resource that needs to be synchronized with Espresso before the test is run.
     @Before
     public void registerIdlingResource() {
         mIdlingResource = activityActivityTestRule.getActivity().getIdlingResource();
-        // To prove that the test fails, omit this call:
         Espresso.registerIdlingResources(mIdlingResource);
     }
 
     @Test
-    public void clickOn() throws Exception {
+    public void clickOnRecipeCard() throws Exception {
         onView(withId(R.id.recipe_list)).perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));
 
-        // Checks that the OrderActivity opens with the correct tea name displayed
         onView(withId(R.id.frame_detail_recipe)).check(matches(isDisplayed()));
     }
 
-    // Remember to unregister resources when not needed to avoid malfunction.
     @After
     public void unregisterIdlingResource() {
         if (mIdlingResource != null) {

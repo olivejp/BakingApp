@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by orlanth23 on 01/07/2017.
  */
+
 @RunWith(AndroidJUnit4.class)
 public class ContentProviderTest {
 

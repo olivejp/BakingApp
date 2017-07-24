@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 public class ProviderUtilities {
 
-    public static Recipe getRecipeFromCursor(Cursor cursor) {
+    private static Recipe getRecipeFromCursor(Cursor cursor) {
         Recipe recipe = new Recipe();
         recipe.setId(cursor.getLong(cursor.getColumnIndex(RecipeInterface._ID)));
         recipe.setName(cursor.getString(cursor.getColumnIndex(RecipeInterface.name)));
@@ -25,7 +25,7 @@ public class ProviderUtilities {
         return recipe;
     }
 
-    public static Ingredient getIngredientFromCursor(Cursor cursor) {
+    private static Ingredient getIngredientFromCursor(Cursor cursor) {
         Ingredient ingredient = new Ingredient();
         ingredient.setIngredient(cursor.getString(cursor.getColumnIndex(IngredientInterface.ingredient)));
         ingredient.setMeasure(cursor.getString(cursor.getColumnIndex(IngredientInterface.measure)));
@@ -33,7 +33,7 @@ public class ProviderUtilities {
         return ingredient;
     }
 
-    public static Step getStepFromCursor(Cursor cursor) {
+    private static Step getStepFromCursor(Cursor cursor) {
         Step step = new Step();
         step.setId(cursor.getInt(cursor.getColumnIndex(StepInterface._ID)));
         step.setDescription(cursor.getString(cursor.getColumnIndex(StepInterface.description)));
@@ -43,42 +43,66 @@ public class ProviderUtilities {
         return step;
     }
 
+    /**
+     * Qurey the content provider with the recipe id to get a list of step
+     * @param context
+     * @param recipeId
+     * @return ArrayList<Step>
+     */
+    private static ArrayList<Step> getStepListByRecipeId(Context context,long recipeId){
+        ArrayList<Step> stepList = new ArrayList<>();
+        String[] arguments = new String[]{String.valueOf(recipeId)};
+        String selectionStep = StepInterface.RECIPE_ID + " = ?";
+        String sortOrder = StepInterface._ID;
+        Cursor cursorStep = context.getContentResolver().query(RecipesProvider.ListStep.LIST_STEP, null, selectionStep, arguments, sortOrder);
+        if (cursorStep != null) {
+            while (cursorStep.moveToNext()) {
+                Step step = ProviderUtilities.getStepFromCursor(cursorStep);
+                stepList.add(step);
+            }
+            cursorStep.close();
+        }
+        return stepList;
+    }
+
+    /**
+     * Qurey the content provider with the recipe id to get a list of ingredient
+     * @param context
+     * @param recipeId
+     * @return ArrayList<Ingredient>
+     */
+    private static ArrayList<Ingredient> getIngredientListByRecipeId(Context context, long recipeId){
+        ArrayList<Ingredient> ingredientList = new ArrayList<>();
+        String[] arguments = new String[]{String.valueOf(recipeId)};
+        String selectionIngredient = IngredientInterface.RECIPE_ID + " = ?";
+        Cursor cursorIngredient = context.getContentResolver().query(RecipesProvider.ListIngredient.LIST_INGREDIENT, null, selectionIngredient, arguments, null);
+        if (cursorIngredient != null) {
+            while (cursorIngredient.moveToNext()) {
+                Ingredient ingredient = ProviderUtilities.getIngredientFromCursor(cursorIngredient);
+                ingredientList.add(ingredient);
+            }
+            cursorIngredient.close();
+        }
+        return ingredientList;
+    }
+
+    /**
+     * Query the ContentProvider from the context to get the recipe list
+     * @param context
+     * @return
+     */
     public static ArrayList<Recipe> getListRecipeFromContentProvider(Context context) {
         ArrayList<Recipe> recipeList = null;
+
+        // Query the content provider to get a cursor of recipe
         Cursor cursorRecipe = context.getContentResolver().query(RecipesProvider.ListRecipe.LIST_RECIPE, null, null, null, null);
+
         if (cursorRecipe != null) {
             recipeList = new ArrayList<>();
             while (cursorRecipe.moveToNext()) {
                 Recipe recipe = ProviderUtilities.getRecipeFromCursor(cursorRecipe);
-
-                String[] arguments = new String[]{String.valueOf(recipe.getId())};
-
-                String selectionStep = StepInterface.RECIPE_ID + " = ?";
-                String sortOrder = StepInterface._ID;
-                Cursor cursorStep = context.getContentResolver().query(RecipesProvider.ListStep.LIST_STEP, null, selectionStep, arguments, sortOrder);
-                if (cursorStep != null) {
-                    ArrayList<Step> stepList = new ArrayList<>();
-                    while (cursorStep.moveToNext()) {
-                        Step step = ProviderUtilities.getStepFromCursor(cursorStep);
-                        stepList.add(step);
-                    }
-                    cursorStep.close();
-                    recipe.setSteps(stepList);
-                }
-
-                String selectionIngredient = IngredientInterface.RECIPE_ID + " = ?";
-                Cursor cursorIngredient = context.getContentResolver().query(RecipesProvider.ListIngredient.LIST_INGREDIENT, null, selectionIngredient, arguments, null);
-                if (cursorIngredient != null) {
-                    ArrayList<Ingredient> ingredientList = new ArrayList<>();
-                    while (cursorIngredient.moveToNext()) {
-                        Ingredient ingredient = ProviderUtilities.getIngredientFromCursor(cursorIngredient);
-                        ingredientList.add(ingredient);
-                    }
-                    cursorIngredient.close();
-                    recipe.setIngredients(ingredientList);
-                }
-
-                recipeList.add(recipe);
+                recipe.setSteps(getStepListByRecipeId(context, recipe.getId()));
+                recipe.setIngredients(getIngredientListByRecipeId(context, recipe.getId()));
             }
             cursorRecipe.close();
         }

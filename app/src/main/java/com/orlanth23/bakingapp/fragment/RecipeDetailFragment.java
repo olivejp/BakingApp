@@ -52,7 +52,7 @@ public class RecipeDetailFragment extends Fragment {
         try {
             mActivity = (AppCompatActivity) context;
         } catch (ClassCastException e){
-            Log.e(TAG, "RecipeDetailFragment could only be call by a AppCompatActivity",e);
+            Log.e(TAG, getString(R.string.recipedetailfragment_need_appcompatactivity),e);
         }
     }
 

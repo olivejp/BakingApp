@@ -73,6 +73,7 @@ public class RecipeListActivity extends AppCompatActivity implements NetworkRece
         mRefreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mRefreshButton.setVisibility(View.GONE);
                 getRecipeListFromTheNet();
             }
         });
@@ -95,7 +96,7 @@ public class RecipeListActivity extends AppCompatActivity implements NetworkRece
             if (mNetworkReceiver.checkConnection(this)) {
                 getRecipeListFromTheNet();
             } else {
-                Toast.makeText(this, "No connection to get the Recipe List from the net", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.no_connection_to_get_recipe_list, Toast.LENGTH_LONG).show();
             }
         }
 
@@ -156,7 +157,7 @@ public class RecipeListActivity extends AppCompatActivity implements NetworkRece
 
                 } catch (JsonSyntaxException e) {
                     Log.e(TAG, e.getMessage(), e);
-                    Toast.makeText(mContext, "Error while getting the recipe list.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(mContext, R.string.error_while_getting_recipe_list, Toast.LENGTH_LONG).show();
                 }
             }
         }
