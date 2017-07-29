@@ -23,6 +23,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -35,15 +36,32 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.orlanth23.bakingapp.activity.RecipeListActivity" />
         </activity>
+
         <provider
-            android:authorities="com.orlanth23.bakingapp.RecipesProvider"
             android:name=".provider.generated.RecipesProvider"
-            android:exported="false"/>
+            android:authorities="com.orlanth23.bakingapp.RecipesProvider"
+            android:exported="false" />
+
         <receiver android:name=".fragment.StepDetailFragment$MediaReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".BakingAppWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/baking_app_widget_info" />
+        </receiver>
+
+        <activity android:name=".BakingAppWidgetConfigureActivity">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
