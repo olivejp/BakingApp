@@ -1,9 +1,13 @@
 package com.orlanth23.bakingapp;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
+import android.content.Intent;
 import android.widget.RemoteViews;
+
+import com.orlanth23.bakingapp.activity.RecipeListActivity;
 
 /**
  * Implementation of App Widget functionality.
@@ -18,6 +22,12 @@ public class BakingAppWidget extends AppWidgetProvider {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.baking_app_widget);
         views.setTextViewText(R.id.appwidget_text, widgetText);
+
+        // Construct a pending intent to the main activity
+        Intent intent = new Intent(context, RecipeListActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+
+        views.setOnClickPendingIntent(R.id.widget_water_button, pendingIntent);
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
