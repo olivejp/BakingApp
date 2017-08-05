@@ -8,10 +8,9 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 
 import com.orlanth23.bakingapp.activity.RecipeListActivity;
-import com.orlanth23.bakingapp.domain.Ingredient;
-import com.orlanth23.bakingapp.provider.ProviderUtilities;
+import com.orlanth23.bakingapp.service.ListViewService;
 
-import java.util.ArrayList;
+import static com.orlanth23.bakingapp.service.ListViewService.EXTRA_RECIPE_ID;
 
 /**
  * Implementation of App Widget functionality.
@@ -25,16 +24,17 @@ public class BakingAppWidget extends AppWidgetProvider {
         // Get the recipe id from the shared preferences
         long recipeId = BakingAppWidgetConfigureActivity.loadRecipeIdPref(context, appWidgetId);
 
-        // Get the list of ingredient for this recipe from the content provider
-        ArrayList<Ingredient> ingredientList = ProviderUtilities.getIngredientListByRecipeId(context, recipeId);
-
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.baking_app_widget);
-        views.setTextViewText(R.id.appwidget_text, widgetText);
+
+        // Create a intent to act as the adapter for the listView
+        Intent intentListViewService = new Intent(context, ListViewService.class);
+        intentListViewService.putExtra(EXTRA_RECIPE_ID, recipeId);
+        views.setRemoteAdapter(R.id.appwidget_listview, intentListViewService);
 
         // Construct a pending intent to the main activity
-        Intent intent = new Intent(context, RecipeListActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        Intent intentRecipeListActivity = new Intent(context, RecipeListActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intentRecipeListActivity, 0);
 
         views.setOnClickPendingIntent(R.id.widget_water_button, pendingIntent);
 
