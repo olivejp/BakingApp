@@ -45,11 +45,29 @@ public class ProviderUtilities {
 
     /**
      * Qurey the content provider with the recipe id to get a list of step
+     *
+     * @param context
+     * @param recipeId
+     * @return Recipe
+     */
+    public static Recipe getRecipeByRecipeId(Context context, long recipeId) {
+        ArrayList<Recipe> listRecipe = getListRecipeFromContentProvider(context);
+        for (Recipe recipe : listRecipe) {
+            if (recipe.getId() == recipeId) {
+                return recipe;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Qurey the content provider with the recipe id to get a list of step
+     *
      * @param context
      * @param recipeId
      * @return ArrayList<Step>
      */
-    private static ArrayList<Step> getStepListByRecipeId(Context context,long recipeId){
+    private static ArrayList<Step> getStepListByRecipeId(Context context, long recipeId) {
         ArrayList<Step> stepList = new ArrayList<>();
         String[] arguments = new String[]{String.valueOf(recipeId)};
         String selectionStep = StepInterface.RECIPE_ID + " = ?";
@@ -67,11 +85,12 @@ public class ProviderUtilities {
 
     /**
      * Qurey the content provider with the recipe id to get a list of ingredient
+     *
      * @param context
      * @param recipeId
      * @return ArrayList<Ingredient>
      */
-    public static ArrayList<Ingredient> getIngredientListByRecipeId(Context context, long recipeId){
+    public static ArrayList<Ingredient> getIngredientListByRecipeId(Context context, long recipeId) {
         ArrayList<Ingredient> ingredientList = new ArrayList<>();
         String[] arguments = new String[]{String.valueOf(recipeId)};
         String selectionIngredient = IngredientInterface.RECIPE_ID + " = ?";
@@ -88,6 +107,7 @@ public class ProviderUtilities {
 
     /**
      * Query the ContentProvider from the context to get the recipe list
+     *
      * @param context
      * @return
      */
@@ -103,6 +123,7 @@ public class ProviderUtilities {
                 Recipe recipe = ProviderUtilities.getRecipeFromCursor(cursorRecipe);
                 recipe.setSteps(getStepListByRecipeId(context, recipe.getId()));
                 recipe.setIngredients(getIngredientListByRecipeId(context, recipe.getId()));
+                recipeList.add(recipe);
             }
             cursorRecipe.close();
         }

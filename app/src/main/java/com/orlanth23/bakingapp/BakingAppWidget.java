@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 
 import com.orlanth23.bakingapp.activity.RecipeListActivity;
+import com.orlanth23.bakingapp.domain.Recipe;
+import com.orlanth23.bakingapp.provider.ProviderUtilities;
 import com.orlanth23.bakingapp.service.ListViewService;
 
 import static com.orlanth23.bakingapp.service.ListViewService.EXTRA_RECIPE_ID;
@@ -23,9 +25,14 @@ public class BakingAppWidget extends AppWidgetProvider {
 
         // Get the recipe id from the shared preferences
         long recipeId = BakingAppWidgetConfigureActivity.loadRecipeIdPref(context, appWidgetId);
+        Recipe recipe = ProviderUtilities.getRecipeByRecipeId(context, recipeId);
 
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.baking_app_widget);
+
+        if (recipe != null) {
+            views.setTextViewText(R.id.appwidget_recipe_name, recipe.getName());
+        }
 
         // Create a intent to act as the adapter for the listView
         Intent intentListViewService = new Intent(context, ListViewService.class);
@@ -36,7 +43,7 @@ public class BakingAppWidget extends AppWidgetProvider {
         Intent intentRecipeListActivity = new Intent(context, RecipeListActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intentRecipeListActivity, 0);
 
-        views.setOnClickPendingIntent(R.id.widget_water_button, pendingIntent);
+        views.setOnClickPendingIntent(R.id.linear_widget, pendingIntent);
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);

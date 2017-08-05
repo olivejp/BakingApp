@@ -51,7 +51,6 @@ class ListViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onDestroy() {
-        ingredientList.clear();
     }
 
     @Override

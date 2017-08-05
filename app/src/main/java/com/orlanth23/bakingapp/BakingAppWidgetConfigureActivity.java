@@ -34,7 +34,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
 
             if (mRecipeId != -1) {
                 // When the button is clicked, store the recipe id locally
-                saveTitlePref(context, mAppWidgetId, mRecipeId);
+                saveRecipeIdPref(context, mAppWidgetId, mRecipeId);
 
                 // It is the responsibility of the configuration activity to update the app widget
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
@@ -67,7 +67,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
     }
 
     // Write the prefix to the SharedPreferences object for this widget
-    static void saveTitlePref(Context context, int appWidgetId, long recipeId) {
+    static void saveRecipeIdPref(Context context, int appWidgetId, long recipeId) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.putLong(PREF_PREFIX_KEY + appWidgetId, recipeId);
         prefs.apply();
@@ -104,7 +104,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
         mAppWidgetSpinner.setOnItemSelectedListener(mOnItemSelectedListener);
 
         // Get List of recipe from ContentProvider
-        ArrayList<Recipe> listRecipe = ProviderUtilities.getListRecipeFromContentProvider(this);
+        ArrayList<Recipe> listRecipe = ProviderUtilities.getListRecipeFromContentProvider(getApplicationContext());
 
         // Create a new adapter for the spinner
         SpinnerAdapter adapter = new SpinnerAdapter(this, R.layout.drawer_spinner_recipe, listRecipe);
@@ -143,4 +143,3 @@ public class BakingAppWidgetConfigureActivity extends Activity {
         mAppWidgetSpinner.setSelection(position);
     }
 }
-
