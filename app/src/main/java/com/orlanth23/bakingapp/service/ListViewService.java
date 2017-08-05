@@ -28,11 +28,11 @@ public class ListViewService extends RemoteViewsService {
 
 class ListViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
-    Context context;
-    long recipeId;
-    ArrayList<Ingredient> ingredientList;
+    private Context context;
+    private long recipeId;
+    private ArrayList<Ingredient> ingredientList;
 
-    public ListViewsFactory(Context context, long recipeId) {
+    ListViewsFactory(Context context, long recipeId) {
         this.context = context;
         this.recipeId = recipeId;
         this.ingredientList = null;
@@ -88,7 +88,7 @@ class ListViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public long getItemId(int i) {
-        return ingredientList.indexOf(ingredientList.get(i));
+        return 0;
     }
 
     @Override
