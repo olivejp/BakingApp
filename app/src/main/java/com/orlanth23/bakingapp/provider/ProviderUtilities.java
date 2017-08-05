@@ -71,7 +71,7 @@ public class ProviderUtilities {
      * @param recipeId
      * @return ArrayList<Ingredient>
      */
-    private static ArrayList<Ingredient> getIngredientListByRecipeId(Context context, long recipeId){
+    public static ArrayList<Ingredient> getIngredientListByRecipeId(Context context, long recipeId){
         ArrayList<Ingredient> ingredientList = new ArrayList<>();
         String[] arguments = new String[]{String.valueOf(recipeId)};
         String selectionIngredient = IngredientInterface.RECIPE_ID + " = ?";

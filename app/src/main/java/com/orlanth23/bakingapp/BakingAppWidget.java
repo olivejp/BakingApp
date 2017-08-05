@@ -8,6 +8,10 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 
 import com.orlanth23.bakingapp.activity.RecipeListActivity;
+import com.orlanth23.bakingapp.domain.Ingredient;
+import com.orlanth23.bakingapp.provider.ProviderUtilities;
+
+import java.util.ArrayList;
 
 /**
  * Implementation of App Widget functionality.
@@ -18,7 +22,12 @@ public class BakingAppWidget extends AppWidgetProvider {
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
-        CharSequence widgetText = BakingAppWidgetConfigureActivity.loadTitlePref(context, appWidgetId);
+        // Get the recipe id from the shared preferences
+        long recipeId = BakingAppWidgetConfigureActivity.loadRecipeIdPref(context, appWidgetId);
+
+        // Get the list of ingredient for this recipe from the content provider
+        ArrayList<Ingredient> ingredientList = ProviderUtilities.getIngredientListByRecipeId(context, recipeId);
+
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.baking_app_widget);
         views.setTextViewText(R.id.appwidget_text, widgetText);
