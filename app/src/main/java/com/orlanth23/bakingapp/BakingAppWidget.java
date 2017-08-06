@@ -5,14 +5,13 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.widget.RemoteViews;
 
 import com.orlanth23.bakingapp.activity.RecipeListActivity;
 import com.orlanth23.bakingapp.domain.Recipe;
 import com.orlanth23.bakingapp.provider.ProviderUtilities;
 import com.orlanth23.bakingapp.service.ListViewService;
-
-import static com.orlanth23.bakingapp.service.ListViewService.EXTRA_RECIPE_ID;
 
 /**
  * Implementation of App Widget functionality.
@@ -36,7 +35,7 @@ public class BakingAppWidget extends AppWidgetProvider {
 
         // Create a intent to act as the adapter for the listView
         Intent intentListViewService = new Intent(context, ListViewService.class);
-        intentListViewService.putExtra(EXTRA_RECIPE_ID, recipeId);
+        intentListViewService.setData(Uri.fromParts("content", String.valueOf(recipeId), null));
         views.setRemoteAdapter(R.id.appwidget_listview, intentListViewService);
 
         // Construct a pending intent to the main activity
@@ -63,7 +62,7 @@ public class BakingAppWidget extends AppWidgetProvider {
     public void onDeleted(Context context, int[] appWidgetIds) {
         // When the user deletes the widget, delete the preference associated with it.
         for (int appWidgetId : appWidgetIds) {
-            BakingAppWidgetConfigureActivity.deleteTitlePref(context, appWidgetId);
+            BakingAppWidgetConfigureActivity.deleteRecipeIdPref(context, appWidgetId);
         }
     }
 

@@ -17,11 +17,9 @@ import java.util.ArrayList;
 
 public class ListViewService extends RemoteViewsService {
 
-    public static final String EXTRA_RECIPE_ID = "recipe_id";
-
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        long recipeId = intent.getLongExtra(EXTRA_RECIPE_ID, -1);
+        long recipeId = Long.parseLong(intent.getData().getSchemeSpecificPart());
         return new ListViewsFactory(this.getApplicationContext(), recipeId);
     }
 }
@@ -40,7 +38,6 @@ class ListViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onCreate() {
-
     }
 
     @Override
@@ -60,7 +57,7 @@ class ListViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public RemoteViews getViewAt(int i) {
-        if (ingredientList.isEmpty()){
+        if (ingredientList.isEmpty()) {
             return null;
         }
 

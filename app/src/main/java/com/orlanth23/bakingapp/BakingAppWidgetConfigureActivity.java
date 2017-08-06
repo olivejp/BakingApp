@@ -23,10 +23,9 @@ public class BakingAppWidgetConfigureActivity extends Activity {
 
     private static final String PREFS_NAME = "com.orlanth23.bakingapp.BakingAppWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
-    private long mRecipeId = -1;
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     Spinner mAppWidgetSpinner;
-
+    private long mRecipeId = -1;
     // Click on the Add button
     View.OnClickListener mOnClickListener = new View.OnClickListener() {
         public void onClick(View v) {
@@ -85,7 +84,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
         }
     }
 
-    static void deleteTitlePref(Context context, int appWidgetId) {
+    static void deleteRecipeIdPref(Context context, int appWidgetId) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.remove(PREF_PREFIX_KEY + appWidgetId);
         prefs.apply();
