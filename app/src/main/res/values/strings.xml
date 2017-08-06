@@ -13,7 +13,6 @@
     <string name="recipedetailfragment_need_appcompatactivity">RecipeDetailFragment could only be call by a AppCompatActivity</string>
     <string name="error_on_exoplayer">An error occurs on the Exoplayer.</string>
     <string name="stepdetailfragment_call_by_onchangesteplistener">StepDetailFragment could only be call by a OnChangeStepListener</string>
-    <string name="appwidget_text">EXAMPLE</string>
     <string name="configure">Configure</string>
     <string name="add_widget">Add widget</string>
     <string name="choose_recipe">Choose your recipe</string>

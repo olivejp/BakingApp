@@ -5,8 +5,8 @@
 
     <TextView
         android:id="@+id/recipe_id"
-        android:layout_height="0dp"
         android:layout_width="0dp"
+        android:layout_height="0dp"
         android:visibility="gone"/>
 
     <TextView
@@ -15,8 +15,8 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
-        android:paddingEnd="40dp"
-        android:paddingRight="40dp"
+        android:paddingEnd="20dp"
+        android:paddingRight="20dp"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"/>
 
 </RelativeLayout>

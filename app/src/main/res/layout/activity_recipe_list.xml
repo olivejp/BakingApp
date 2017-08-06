@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/recipe_list_linear_layout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/recipe_list_linear_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -29,9 +29,9 @@
             android:id="@+id/refresh_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            android:src="@android:drawable/ic_menu_rotate"
+            android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
-            android:layout_gravity="bottom|right"/>
+            android:clickable="true"
+            android:src="@android:drawable/ic_menu_rotate" />
     </FrameLayout>
 </LinearLayout>
