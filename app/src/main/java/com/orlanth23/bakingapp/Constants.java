@@ -1,4 +1,4 @@
-package com.orlanth23.bakingapp.singleton;
+package com.orlanth23.bakingapp;
 
 /**
  * Created by orlanth23 on 08/07/2017.

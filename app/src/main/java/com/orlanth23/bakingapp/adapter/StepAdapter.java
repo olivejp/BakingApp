@@ -1,6 +1,7 @@
 package com.orlanth23.bakingapp.adapter;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -30,7 +31,7 @@ public class StepAdapter
     private boolean mTwoPane;
     private AppCompatActivity mAppCompatActivity;
 
-    public StepAdapter(AppCompatActivity activity, Recipe recipe, boolean twoPane) {
+    public StepAdapter(@NonNull AppCompatActivity activity, Recipe recipe, boolean twoPane) {
         mRecipe = recipe;
         mTwoPane = twoPane;
         mAppCompatActivity = activity;

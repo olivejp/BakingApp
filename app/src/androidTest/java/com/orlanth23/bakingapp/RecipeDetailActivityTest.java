@@ -26,7 +26,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 public class RecipeDetailActivityTest {
 
     @Rule
-    public ActivityTestRule<RecipeDetailActivity> recipeDetailactivityTestRule = new ActivityTestRule<>(RecipeDetailActivity.class);
+    public ActivityTestRule<RecipeDetailActivity> recipeDetailActivityTestRule = new ActivityTestRule<>(RecipeDetailActivity.class);
 
     @Test
     public void clickOn() throws Exception {

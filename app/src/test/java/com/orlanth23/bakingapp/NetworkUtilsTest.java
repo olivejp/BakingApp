@@ -3,7 +3,6 @@ package com.orlanth23.bakingapp;
 import android.text.TextUtils;
 
 import com.orlanth23.bakingapp.network.NetworkUtils;
-import com.orlanth23.bakingapp.singleton.Constants;
 
 import org.junit.Assert;
 import org.junit.Test;

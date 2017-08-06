@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.test.espresso.IdlingResource;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import com.orlanth23.bakingapp.Constants;
 import com.orlanth23.bakingapp.IdlingResource.SimpleIdlingResource;
 import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.adapter.RecipeAdapter;
@@ -27,7 +29,6 @@ import com.orlanth23.bakingapp.broadcast.NetworkReceiver;
 import com.orlanth23.bakingapp.domain.Recipe;
 import com.orlanth23.bakingapp.network.NetworkUtils;
 import com.orlanth23.bakingapp.provider.ProviderUtilities;
-import com.orlanth23.bakingapp.singleton.Constants;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -35,11 +36,10 @@ import java.util.ArrayList;
 public class RecipeListActivity extends AppCompatActivity implements NetworkReceiver.NetworkChangeListener {
 
     private static final String TAG = RecipeListActivity.class.getName();
-
+    private static final int NUMBER_GRID_COLUMN = 3;
     private Context mContext = this;
     private RecyclerView mRecyclerView;
     private FloatingActionButton mRefreshButton;
-    private static final int NUMBER_GRID_COLUMN = 3;
     private NetworkReceiver mNetworkReceiver;
 
     // The Idling Resource which will be null in production.
@@ -62,6 +62,7 @@ public class RecipeListActivity extends AppCompatActivity implements NetworkRece
 
         getIdlingResource();
 
+        // Register a network broadcast receiver to apply modification when network connectivity change
         mNetworkReceiver = new NetworkReceiver(this);
         registerReceiver(mNetworkReceiver, NetworkReceiver.CONNECTIVITY_CHANGE_INTENT_FILTER);
 
@@ -147,17 +148,22 @@ public class RecipeListActivity extends AppCompatActivity implements NetworkRece
                     Runnable runnable = new Runnable() {
                         @Override
                         public void run() {
+                            // When we get the recipe list from the network, we populate our content provider with.
                             ProviderUtilities.populateContentProviderFromList(mContext, tempList);
+
+                            // Only use for test
                             if (mIdlingResource != null) {
                                 mIdlingResource.setIdleState(true);
                             }
+                            Snackbar.make(mRecyclerView, R.string.snackbar_recipe_list_uptodate, Snackbar.LENGTH_LONG).show();
+                            mNetworkReceiver.checkConnection(mContext);
                         }
                     };
                     runnable.run();
 
                 } catch (JsonSyntaxException e) {
                     Log.e(TAG, e.getMessage(), e);
-                    Toast.makeText(mContext, R.string.error_while_getting_recipe_list, Toast.LENGTH_LONG).show();
+                    Snackbar.make(mRecyclerView, getString(R.string.error_while_getting_recipe_list), Snackbar.LENGTH_LONG).show();
                 }
             }
         }

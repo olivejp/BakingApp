@@ -70,7 +70,33 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     private TextView mStepDescription;
     private ScrollView mScrollStepDescription;
     private NetworkReceiver mNetworkReceiver;
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
+            switch (item.getItemId()) {
+                case R.id.navigation_previous:
+                    if (mStepIndex > 0) {
+                        mStepIndex--;
+                        mStep = mRecipe.getSteps().get(mStepIndex);
+                        initializeViews();
+                    }
+                    return true;
+                case R.id.navigation_next:
+                    if (mStepIndex < mRecipe.getSteps().size() - 1) {
+                        mStepIndex++;
+                        mStep = mRecipe.getSteps().get(mStepIndex);
+                        initializeViews();
+                    }
+                    return true;
+            }
+            return false;
+        }
+    };
+
+    public StepDetailFragment() {
+    }
 
     @Override
     public void OnNetworkEnable() {
@@ -86,9 +112,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         if (mPlayerView != null) {
             initializeViews();
         }
-    }
-
-    public StepDetailFragment() {
     }
 
     @Override
@@ -149,31 +172,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         return rootView;
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-            switch (item.getItemId()) {
-                case R.id.navigation_previous:
-                    if (mStepIndex > 0) {
-                        mStepIndex--;
-                        mStep = mRecipe.getSteps().get(mStepIndex);
-                        initializeViews();
-                    }
-                    return true;
-                case R.id.navigation_next:
-                    if (mStepIndex < mRecipe.getSteps().size() - 1) {
-                        mStepIndex++;
-                        mStep = mRecipe.getSteps().get(mStepIndex);
-                        initializeViews();
-                    }
-                    return true;
-            }
-            return false;
-        }
-    };
-
     private void initializeViews() {
         // Initialize the player with the video URL
         if (mIsConnected && !TextUtils.isEmpty(mStep.getVideoURL())) {
@@ -215,7 +213,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
                                 PlaybackStateCompat.ACTION_PLAY_PAUSE);
 
         mMediaSession.setPlaybackState(mStateBuilder.build());
-
 
         // MySessionCallback has methods that handle callbacks from a media controller.
         mMediaSession.setCallback(new MySessionCallback());
@@ -300,18 +297,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         mMediaSession.setActive(false);
     }
 
-    private class MySessionCallback extends MediaSessionCompat.Callback {
-        @Override
-        public void onPlay() {
-            mExoPlayer.setPlayWhenReady(true);
-        }
-
-        @Override
-        public void onPause() {
-            mExoPlayer.setPlayWhenReady(false);
-        }
-    }
-
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         if ((playbackState == ExoPlayer.STATE_READY) && playWhenReady) {
@@ -343,7 +328,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         }
     }
 
-
     @Override
     public void onPlayerError(ExoPlaybackException error) {
         Log.e(TAG, error.getMessage(), error);
@@ -363,6 +347,18 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         @Override
         public void onReceive(Context context, Intent intent) {
             MediaButtonReceiver.handleIntent(mMediaSession, intent);
+        }
+    }
+
+    private class MySessionCallback extends MediaSessionCompat.Callback {
+        @Override
+        public void onPlay() {
+            mExoPlayer.setPlayWhenReady(true);
+        }
+
+        @Override
+        public void onPause() {
+            mExoPlayer.setPlayWhenReady(false);
         }
     }
 }

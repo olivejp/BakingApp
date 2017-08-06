@@ -107,9 +107,8 @@ public class ProviderUtilities {
 
     /**
      * Query the ContentProvider from the context to get the recipe list
-     *
      * @param context
-     * @return
+     * @return List of recipe
      */
     public static ArrayList<Recipe> getListRecipeFromContentProvider(Context context) {
         ArrayList<Recipe> recipeList = null;
@@ -130,6 +129,12 @@ public class ProviderUtilities {
         return recipeList;
     }
 
+    /**
+     * Populate the content provider with the recipe list
+     *
+     * @param context
+     * @param recipeList
+     */
     public static void populateContentProviderFromList(Context context, ArrayList<Recipe> recipeList) {
 
         // Delete all the content

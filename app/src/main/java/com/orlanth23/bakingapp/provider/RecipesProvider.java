@@ -13,7 +13,7 @@ import net.simonvt.schematic.annotation.TableEndpoint;
 
 @ContentProvider(authority = RecipesProvider.AUTHORITY, database = RecipesDatabase.class)
 public class RecipesProvider {
-    public static final String AUTHORITY = "com.orlanth23.bakingapp.RecipesProvider";
+    static final String AUTHORITY = "com.orlanth23.bakingapp.RecipesProvider";
 
 
     @TableEndpoint(table = RecipesDatabase.LIST_INGREDIENT)

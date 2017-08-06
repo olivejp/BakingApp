@@ -10,18 +10,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.orlanth23.bakingapp.Constants;
 import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.domain.Recipe;
 import com.orlanth23.bakingapp.fragment.RecipeDetailFragment;
 import com.orlanth23.bakingapp.fragment.StepDetailFragment;
-import com.orlanth23.bakingapp.singleton.Constants;
 
 public class RecipeDetailActivity extends AppCompatActivity {
 
-    private static final String TAG_RECIPE_DETAIL_FRAGMENT = "TAG_RECIPE_DETAIL_FRAGMENT";
     public static final String TAG_STEP_DETAIL_FRAGMENT = "TAG_STEP_DETAIL_FRAGMENT";
-    private static final String TAG_RECIPE = "TAG_RECIPE";
     public static final String ARG_RECIPE = "ARG_RECIPE";
+    private static final String TAG_RECIPE_DETAIL_FRAGMENT = "TAG_RECIPE_DETAIL_FRAGMENT";
+    private static final String TAG_RECIPE = "TAG_RECIPE";
     private RecipeDetailFragment mRecipeDetailFragment;
     private StepDetailFragment mStepDetailFragment;
     private Recipe mRecipe;

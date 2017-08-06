@@ -20,16 +20,14 @@ import butterknife.ButterKnife;
 
 public class RecipeDetailFragment extends Fragment {
 
-    private Recipe mRecipe;
-    private boolean mTwoPane;
-    private AppCompatActivity mActivity;
-
     private static final String TAG = RecipeDetailFragment.class.getName();
-
     @BindView(R.id.recipe_detail_list_ingredients)
     RecyclerView mRecyclerViewIngredients;
     @BindView(R.id.recipe_detail_list_steps)
     RecyclerView mRecyclerViewSteps;
+    private Recipe mRecipe;
+    private boolean mTwoPane;
+    private AppCompatActivity mActivity;
 
     public RecipeDetailFragment() {
     }

@@ -8,10 +8,12 @@ import net.simonvt.schematic.annotation.Table;
  */
 
 @Database(version = RecipesDatabase.VERSION)
-public class RecipesDatabase {
-    public static final int VERSION = 1;
-
-    @Table(RecipeInterface.class) public static final String LIST_RECIPE = "listRecipe";
-    @Table(IngredientInterface.class) public static final String LIST_INGREDIENT = "listIngredient";
-    @Table(StepInterface.class) public static final String LIST_STEP = "listStep";
+class RecipesDatabase {
+    @Table(RecipeInterface.class)
+    static final String LIST_RECIPE = "listRecipe";
+    @Table(IngredientInterface.class)
+    static final String LIST_INGREDIENT = "listIngredient";
+    @Table(StepInterface.class)
+    static final String LIST_STEP = "listStep";
+    static final int VERSION = 1;
 }

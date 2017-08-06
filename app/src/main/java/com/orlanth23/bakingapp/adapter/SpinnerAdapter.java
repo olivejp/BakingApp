@@ -3,6 +3,7 @@ package com.orlanth23.bakingapp.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +25,7 @@ public class SpinnerAdapter extends BaseAdapter {
     private int res;
     private ArrayList<Recipe> navRecipeItems;
 
-    public SpinnerAdapter(Context context, @LayoutRes int resource, ArrayList<Recipe> navRecipeItems) {
+    public SpinnerAdapter(@NonNull Context context, @LayoutRes int resource, ArrayList<Recipe> navRecipeItems) {
         super();
 
         this.context = context;
