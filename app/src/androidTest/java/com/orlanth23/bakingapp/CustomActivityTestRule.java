@@ -1,6 +1,7 @@
 package com.orlanth23.bakingapp;
 
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.test.rule.ActivityTestRule;
 import android.support.v7.app.AppCompatActivity;
 
@@ -28,7 +29,7 @@ public class CustomActivityTestRule<A extends AppCompatActivity> extends Activit
         this.getIntentListener = null;
     }
 
-    public CustomActivityTestRule(Class<A> activityClass, onBeforeListener onBeforeListener, getIntentListener getIntentListener) {
+    public CustomActivityTestRule(Class<A> activityClass, @Nullable onBeforeListener onBeforeListener, @Nullable getIntentListener getIntentListener) {
         super(activityClass);
         this.onBeforeListener = onBeforeListener;
         this.getIntentListener = getIntentListener;
@@ -39,11 +40,32 @@ public class CustomActivityTestRule<A extends AppCompatActivity> extends Activit
     @Override
     protected void beforeActivityLaunched() {
         super.beforeActivityLaunched();
-        onBeforeListener.onBefore();
+        if (onBeforeListener != null) {
+            onBeforeListener.onBefore();
+        }
     }
 
     @Override
     protected Intent getActivityIntent() {
-        return getIntentListener.getIntent();
+        if (getIntentListener != null) {
+            return getIntentListener.getIntent();
+        }
+        return null;
+    }
+
+    public CustomActivityTestRule.onBeforeListener getOnBeforeListener() {
+        return onBeforeListener;
+    }
+
+    public void setOnBeforeListener(CustomActivityTestRule.onBeforeListener onBeforeListener) {
+        this.onBeforeListener = onBeforeListener;
+    }
+
+    public CustomActivityTestRule.getIntentListener getGetIntentListener() {
+        return getIntentListener;
+    }
+
+    public void setGetIntentListener(CustomActivityTestRule.getIntentListener getIntentListener) {
+        this.getIntentListener = getIntentListener;
     }
 }
