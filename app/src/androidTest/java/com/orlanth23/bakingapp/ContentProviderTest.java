@@ -26,6 +26,8 @@ public class ContentProviderTest {
 
     private Context mContext;
 
+    private TestUtilities.TestContentObserver tco;
+
     private void deleteRecords(Uri uri) {
         mContext.getContentResolver().delete(
                 uri,
@@ -54,7 +56,6 @@ public class ContentProviderTest {
         deleteRecords(uri);
 
         /* add a ContentObserver */
-        TestUtilities.TestContentObserver tco = TestUtilities.getTestContentObserver();
         mContext.getContentResolver().registerContentObserver(uri, true, tco);
 
         /* try to insert */
@@ -90,6 +91,7 @@ public class ContentProviderTest {
     @Before
     public void precondition() {
         mContext = InstrumentationRegistry.getTargetContext();
+        tco = TestUtilities.getTestContentObserver();
     }
 
 
