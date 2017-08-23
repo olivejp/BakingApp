@@ -17,4 +17,5 @@
     <string name="add_widget">Add widget</string>
     <string name="choose_recipe">Choose your recipe</string>
     <string name="snackbar_recipe_list_uptodate">Recipe list is up to date.</string>
+    <string name="step_thumbnail_content_description">Step Thumbnail</string>
 </resources>
