@@ -35,22 +35,24 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 public class RecipeDetailActivityTest {
 
     private Context mContext = InstrumentationRegistry.getTargetContext();
-    private ArrayList<Recipe> mArrayList;
 
+    // Because RecipteDetailActivity needs an Intent, I made a custom ActivityTestRule and override the getIntent method to pass an custom test Intent to the activity.
     private CustomActivityTestRule.getIntentListener getIntentListener = new CustomActivityTestRule.getIntentListener() {
         @Override
         public Intent getIntent() {
-            // Populated the ContentProvider with some fresh recipes from JSON Assets
+            // Populated the ContentProvider with some fresh recipes from JSON Assets (we don't want to get the list from internet for the test)
             String json = Utilities.loadJSONFromAsset(mContext, "recipe_list.json");
             Type listType = new TypeToken<ArrayList<Recipe>>() {
             }.getType();
             Gson gson = new Gson();
-            mArrayList = gson.fromJson(json, listType);
+            ArrayList<Recipe> mArrayList = gson.fromJson(json, listType);
             ProviderUtilities.populateContentProviderFromList(mContext, mArrayList);
 
             // Create an intent
             Intent intent = new Intent();
-            intent.putExtra(RecipeDetailActivity.ARG_RECIPE, mArrayList.get(1));
+            if (mArrayList != null) {
+                intent.putExtra(RecipeDetailActivity.ARG_RECIPE, mArrayList.get(1));
+            }
             return intent;
         }
     };
@@ -60,9 +62,14 @@ public class RecipeDetailActivityTest {
 
     @Test
     public void clickOn() throws Exception {
+        // We check that the frame is present
         onView(withId(R.id.frame_detail_recipe)).check(matches(isDisplayed()));
+
+        // we click on the first element of the step list
         onView(withId(R.id.recipe_detail_list_steps))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));
+
+        // we check that the step description is displayed
         onView(withId(R.id.step_description)).check(matches(isDisplayed()));
     }
 }
