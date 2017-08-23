@@ -46,10 +46,24 @@ public class RecipeDetailActivity extends AppCompatActivity {
             mRecipeDetailFragment.updateFragment(mTwoPane, mRecipe);
         } else {
             mRecipeDetailFragment = RecipeDetailFragment.newInstance(mRecipe, mTwoPane);
+        }
 
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.frame_detail_recipe, mRecipeDetailFragment, TAG_RECIPE_DETAIL_FRAGMENT)
-                    .commit();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.frame_detail_recipe, mRecipeDetailFragment, TAG_RECIPE_DETAIL_FRAGMENT)
+                .commit();
+
+
+        if (mStepDetailFragment != null) {
+            if (mTwoPane) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.frame_step_container, mStepDetailFragment, TAG_STEP_DETAIL_FRAGMENT)
+                        .commit();
+            } else {
+                // Remove the stepDetailFragment cause we dont get the frame_step_container
+                getSupportFragmentManager().beginTransaction()
+                        .remove(mStepDetailFragment)
+                        .commit();
+            }
         }
 
         // Show the Up button in the action bar.
@@ -66,6 +80,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 actionBar.setDisplayHomeAsUpEnabled(true);
             }
         }
+
     }
 
     @Override
