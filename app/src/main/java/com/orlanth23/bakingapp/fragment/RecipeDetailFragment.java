@@ -5,11 +5,14 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.adapter.IngredientAdapter;
 import com.orlanth23.bakingapp.adapter.StepAdapter;
@@ -25,6 +28,8 @@ public class RecipeDetailFragment extends Fragment {
     RecyclerView mRecyclerViewIngredients;
     @BindView(R.id.recipe_detail_list_steps)
     RecyclerView mRecyclerViewSteps;
+    @BindView(R.id.recipe_detail_image)
+    ImageView mImageRecipe;
     private Recipe mRecipe;
     private boolean mTwoPane;
     private AppCompatActivity mActivity;
@@ -69,6 +74,15 @@ public class RecipeDetailFragment extends Fragment {
 
         mRecyclerViewIngredients.setAdapter(new IngredientAdapter(mRecipe.getIngredients()));
         mRecyclerViewSteps.setAdapter(new StepAdapter(mActivity, mRecipe, mTwoPane));
+
+        if (!TextUtils.isEmpty(mRecipe.getImage())) {
+            mImageRecipe.setVisibility(View.VISIBLE);
+            Glide.with(mActivity)
+                    .load(mRecipe.getImage())
+                    .into(mImageRecipe);
+        } else {
+            mImageRecipe.setVisibility(View.GONE);
+        }
 
         return rootView;
     }

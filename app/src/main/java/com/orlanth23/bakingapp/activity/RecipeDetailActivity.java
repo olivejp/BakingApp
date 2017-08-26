@@ -25,15 +25,9 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private RecipeDetailFragment mRecipeDetailFragment;
     private StepDetailFragment mStepDetailFragment;
     private Recipe mRecipe;
+    private boolean mTwoPane;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recipe_detail);
-
-        // Are we in two panel mode
-        boolean mTwoPane = findViewById(R.id.frame_step_container) != null;
-
+    private void getFromSavedInstanceState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             mRecipe = savedInstanceState.getParcelable(TAG_RECIPE);
             mRecipeDetailFragment = (RecipeDetailFragment) getSupportFragmentManager().getFragment(savedInstanceState, TAG_RECIPE_DETAIL_FRAGMENT);
@@ -41,18 +35,21 @@ public class RecipeDetailActivity extends AppCompatActivity {
         } else {
             mRecipe = getIntent().getParcelableExtra(ARG_RECIPE);
         }
+    }
 
+    private void initializeFragments() {
+
+        // Initialize RecipeDetailFragment
         if (mRecipeDetailFragment != null) {
             mRecipeDetailFragment.updateFragment(mTwoPane, mRecipe);
         } else {
             mRecipeDetailFragment = RecipeDetailFragment.newInstance(mRecipe, mTwoPane);
         }
-
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.frame_detail_recipe, mRecipeDetailFragment, TAG_RECIPE_DETAIL_FRAGMENT)
                 .commit();
 
-
+        // Initialize StepDetailFragment
         if (mStepDetailFragment != null) {
             if (mTwoPane) {
                 getSupportFragmentManager().beginTransaction()
@@ -65,6 +62,22 @@ public class RecipeDetailActivity extends AppCompatActivity {
                         .commit();
             }
         }
+
+        getSupportFragmentManager().executePendingTransactions();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_recipe_detail);
+
+        // Are we in two panel mode
+        mTwoPane = findViewById(R.id.frame_step_container) != null;
+
+        getFromSavedInstanceState(savedInstanceState);
+
+        initializeFragments();
 
         // Show the Up button in the action bar.
         if (findViewById(R.id.toolbar_title) != null) {
@@ -80,7 +93,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 actionBar.setDisplayHomeAsUpEnabled(true);
             }
         }
-
     }
 
     @Override
@@ -104,9 +116,11 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
         getSupportFragmentManager().putFragment(outState, TAG_RECIPE_DETAIL_FRAGMENT, mRecipeDetailFragment);
 
-        mStepDetailFragment = (StepDetailFragment) getSupportFragmentManager().findFragmentByTag(TAG_STEP_DETAIL_FRAGMENT);
-        if (mStepDetailFragment != null) {
-            getSupportFragmentManager().putFragment(outState, TAG_STEP_DETAIL_FRAGMENT, mStepDetailFragment);
+        if (mTwoPane) {
+            mStepDetailFragment = (StepDetailFragment) getSupportFragmentManager().findFragmentByTag(TAG_STEP_DETAIL_FRAGMENT);
+            if (mStepDetailFragment != null) {
+                getSupportFragmentManager().putFragment(outState, TAG_STEP_DETAIL_FRAGMENT, mStepDetailFragment);
+            }
         }
     }
 }

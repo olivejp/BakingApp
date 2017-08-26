@@ -2,7 +2,6 @@ package com.orlanth23.bakingapp.activity;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,29 +17,29 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 import com.orlanth23.bakingapp.Constants;
 import com.orlanth23.bakingapp.IdlingResource.SimpleIdlingResource;
 import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.adapter.RecipeAdapter;
 import com.orlanth23.bakingapp.broadcast.NetworkReceiver;
 import com.orlanth23.bakingapp.domain.Recipe;
-import com.orlanth23.bakingapp.network.NetworkUtils;
 import com.orlanth23.bakingapp.provider.ProviderUtilities;
+import com.orlanth23.bakingapp.task.GetRecipesFromNetwork;
+import com.orlanth23.bakingapp.task.RecipeListTaskListener;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-public class RecipeListActivity extends AppCompatActivity implements NetworkReceiver.NetworkChangeListener {
+public class RecipeListActivity extends AppCompatActivity implements NetworkReceiver.NetworkChangeListener, UpdateViewActivityInterface<ArrayList<Recipe>> {
 
     private static final String TAG = RecipeListActivity.class.getName();
     private static final int NUMBER_GRID_COLUMN = 3;
+
     private Context mContext = this;
+
     private RecyclerView mRecyclerView;
     private FloatingActionButton mRefreshButton;
     private NetworkReceiver mNetworkReceiver;
+    private RecipeListTaskListener mRecipeListTaskListener;
 
     // The Idling Resource which will be null in production.
     @Nullable
@@ -61,6 +60,9 @@ public class RecipeListActivity extends AppCompatActivity implements NetworkRece
         super.onCreate(savedInstanceState);
 
         getIdlingResource();
+
+        // Create a new listener
+        mRecipeListTaskListener = new RecipeListTaskListener(this);
 
         // Register a network broadcast receiver to apply modification when network connectivity change
         mNetworkReceiver = new NetworkReceiver(this);
@@ -109,7 +111,7 @@ public class RecipeListActivity extends AppCompatActivity implements NetworkRece
     }
 
     private void getRecipeListFromTheNet() {
-        new GetRecipesFromNetwork().execute();
+        new GetRecipesFromNetwork(this, mRecipeListTaskListener).execute();
     }
 
     @Override
@@ -128,44 +130,30 @@ public class RecipeListActivity extends AppCompatActivity implements NetworkRece
         unregisterReceiver(mNetworkReceiver);
     }
 
-    private class GetRecipesFromNetwork extends AsyncTask<Void, Void, String> {
-        @Override
-        protected String doInBackground(Void... voids) {
-            return NetworkUtils.makeServiceCall(Constants.API_URL);
-        }
+    @Override
+    public void onCompleteUpdateView(final ArrayList<Recipe> result) {
+        setupRecyclerView(mRecyclerView, result);
 
-        @Override
-        protected void onPostExecute(String json) {
-            super.onPostExecute(json);
-            if (json != null) {
-                Gson gson = new Gson();
-                Type listType = new TypeToken<ArrayList<Recipe>>() {
-                }.getType();
-                try {
-                    final ArrayList<Recipe> tempList = gson.fromJson(json, listType);
-                    setupRecyclerView(mRecyclerView, tempList);
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                // When we get the recipe list from the network, we populate our content provider with.
+                ProviderUtilities.populateContentProviderFromList(mContext, result);
 
-                    Runnable runnable = new Runnable() {
-                        @Override
-                        public void run() {
-                            // When we get the recipe list from the network, we populate our content provider with.
-                            ProviderUtilities.populateContentProviderFromList(mContext, tempList);
-
-                            // Only use for test
-                            if (mIdlingResource != null) {
-                                mIdlingResource.setIdleState(true);
-                            }
-                            Snackbar.make(mRecyclerView, R.string.snackbar_recipe_list_uptodate, Snackbar.LENGTH_LONG).show();
-                            mNetworkReceiver.checkConnection(mContext);
-                        }
-                    };
-                    runnable.run();
-
-                } catch (JsonSyntaxException e) {
-                    Log.e(TAG, e.getMessage(), e);
-                    Snackbar.make(mRecyclerView, getString(R.string.error_while_getting_recipe_list), Snackbar.LENGTH_LONG).show();
+                // Only use for test
+                if (mIdlingResource != null) {
+                    mIdlingResource.setIdleState(true);
                 }
+                Snackbar.make(mRecyclerView, R.string.snackbar_recipe_list_uptodate, Snackbar.LENGTH_LONG).show();
+                mNetworkReceiver.checkConnection(mContext);
             }
-        }
+        };
+        runnable.run();
+    }
+
+    @Override
+    public void onFailureUpdateView(Exception e) {
+        Log.e(TAG, e.getMessage(), e);
+        Snackbar.make(mRecyclerView, getString(R.string.error_while_getting_recipe_list), Snackbar.LENGTH_LONG).show();
     }
 }

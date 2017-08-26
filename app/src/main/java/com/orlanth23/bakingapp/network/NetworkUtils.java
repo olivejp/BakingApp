@@ -21,10 +21,9 @@ public class NetworkUtils {
 
     private static final String TAG = "NetworkUtils";
 
-    public static String makeServiceCall(String reqUrl) {
+    public static String makeServiceCall(URL url) {
         String response = null;
         try {
-            URL url = new URL(reqUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             InputStream in = new BufferedInputStream(conn.getInputStream());

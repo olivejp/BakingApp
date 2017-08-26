@@ -48,7 +48,7 @@ public class RecipeDetailActivityTest {
             ArrayList<Recipe> mArrayList = gson.fromJson(json, listType);
             ProviderUtilities.populateContentProviderFromList(mContext, mArrayList);
 
-            // Create an intent
+            // Create an intent and return it
             Intent intent = new Intent();
             if (mArrayList != null) {
                 intent.putExtra(RecipeDetailActivity.ARG_RECIPE, mArrayList.get(1));
@@ -62,7 +62,8 @@ public class RecipeDetailActivityTest {
 
     @Test
     public void clickOn() throws Exception {
-        // We check that the frame is present
+
+        // We check that the frame for the recipe detail is present
         onView(withId(R.id.frame_detail_recipe)).check(matches(isDisplayed()));
 
         // we click on the first element of the step list

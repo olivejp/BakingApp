@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.media.session.MediaButtonReceiver;
@@ -20,12 +21,10 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -49,6 +48,9 @@ import com.orlanth23.bakingapp.broadcast.NetworkReceiver;
 import com.orlanth23.bakingapp.domain.Recipe;
 import com.orlanth23.bakingapp.domain.Step;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 
@@ -68,11 +70,14 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     private PlaybackStateCompat.Builder mStateBuilder;
     private NotificationManager mNotificationManager;
 
-    private SimpleExoPlayerView mPlayerView;
-    private TextView mStepDescription;
-    private ScrollView mScrollStepDescription;
+    @BindView(R.id.player_view)
+    SimpleExoPlayerView mPlayerView;
+    @BindView(R.id.step_description)
+    TextView mStepDescription;
+    @Nullable
+    @BindView(R.id.scroll_step_description_land_phone)
+    ScrollView mScrollStepDescription;
     private NetworkReceiver mNetworkReceiver;
-    private ImageView mStepThumbnail;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -155,13 +160,10 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_step_detail, container, false);
 
+        ButterKnife.bind(this, rootView);
+
         // Check the internet connection
         mIsConnected = mNetworkReceiver.checkConnection(getActivity());
-
-        mScrollStepDescription = rootView.findViewById(R.id.scroll_step_description_land_phone);
-        mStepDescription = rootView.findViewById(R.id.step_description);
-        mPlayerView = rootView.findViewById(R.id.player_view);
-        mStepThumbnail = rootView.findViewById(R.id.step_thumbnail);
 
         // The scroll_step_description_land_phone is only available on the Landscape Phone Screen
         isLandscapePhoneScreen = (mScrollStepDescription != null);
@@ -178,15 +180,32 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     }
 
     private void initializeViews() {
+        String videoUrl = "";
+
+        // Search a valid video to show
+        if (!TextUtils.isEmpty(mStep.getVideoURL())) {
+            videoUrl = mStep.getVideoURL();
+        }
+
+        // Maybe the video is in the thumbnail
+        if (videoUrl.isEmpty() && !TextUtils.isEmpty(mStep.getThumbnailURL())) {
+            String extension = mStep.getThumbnailURL().substring(mStep.getThumbnailURL().lastIndexOf("."));
+            if (extension.equals(".mp4")) {
+                videoUrl = mStep.getThumbnailURL();
+            }
+        }
+
         // Initialize the player with the video URL
         if (mIsConnected) {
-            if (!TextUtils.isEmpty(mStep.getVideoURL())) {
+            if (!TextUtils.isEmpty(videoUrl)) {
                 mPlayerView.setVisibility(View.VISIBLE);
-                initializePlayer(Uri.parse(mStep.getVideoURL()));
+                initializePlayer(Uri.parse(videoUrl));
 
                 // In Phone screen, exoplayer is fullscreen, so there is no step description
                 if (isLandscapePhoneScreen) {
-                    mScrollStepDescription.setVisibility(View.GONE);
+                    if (mScrollStepDescription != null) {
+                        mScrollStepDescription.setVisibility(View.GONE);
+                    }
                 } else {
                     mStepDescription.setText(mStep.getDescription());
                 }
@@ -199,17 +218,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
             mPlayerView.setVisibility(View.GONE);
             releasePlayer();
             mStepDescription.setText(mStep.getDescription());
-        }
-
-        // If we get an image, we try to download it
-        if (!TextUtils.isEmpty(mStep.getThumbnailURL())) {
-            Glide.with(getContext())
-                    .load(mStep.getThumbnailURL())
-                    .error(R.mipmap.ic_baking_app)
-                    .placeholder(R.mipmap.ic_baking_app)
-                    .into(mStepThumbnail);
-        } else {
-            mStepThumbnail.setVisibility(View.GONE);
         }
     }
 
