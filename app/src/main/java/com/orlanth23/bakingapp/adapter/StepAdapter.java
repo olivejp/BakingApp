@@ -1,14 +1,16 @@
 package com.orlanth23.bakingapp.adapter;
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.activity.RecipeDetailActivity;
 import com.orlanth23.bakingapp.domain.Recipe;
@@ -50,20 +52,26 @@ public class StepAdapter
         holder.mStep = mRecipe.getSteps().get(stepIndex);
         holder.mShortDescriptionView.setText(holder.mStep.getShortDescription());
 
+        if (!TextUtils.isEmpty(holder.mStep.getThumbnailURL())){
+            holder.mThumbnail.setVisibility(View.VISIBLE);
+            Glide.with(mAppCompatActivity)
+                    .load(holder.mStep.getThumbnailURL())
+                    .into(holder.mThumbnail);
+        } else {
+            holder.mThumbnail.setVisibility(View.GONE);
+        }
+
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Bundle arguments = new Bundle();
-                arguments.putInt(StepDetailFragment.ARG_STEP_INDEX, stepIndex);
-                arguments.putParcelable(StepDetailFragment.ARG_RECIPE, mRecipe);
-
-                StepDetailFragment fragment = new StepDetailFragment();
-                fragment.setArguments(arguments);
+                StepDetailFragment fragment = StepDetailFragment.newInstance(stepIndex, mRecipe);
 
                 if (mTwoPane) {
-                    mAppCompatActivity.getSupportFragmentManager().beginTransaction()
+                    mAppCompatActivity.getSupportFragmentManager()
+                            .beginTransaction()
                             .replace(R.id.frame_step_container, fragment, RecipeDetailActivity.TAG_STEP_DETAIL_FRAGMENT)
+                            .addToBackStack(BACKSTACK)
                             .commit();
                 } else {
                     mAppCompatActivity.getSupportFragmentManager()
@@ -87,6 +95,8 @@ public class StepAdapter
 
         @BindView(R.id.step_short_description)
         TextView mShortDescriptionView;
+        @BindView(R.id.step_thumbnail)
+        ImageView mThumbnail;
 
         ViewHolder(View view) {
             super(view);

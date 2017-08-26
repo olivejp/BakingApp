@@ -45,6 +45,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         } else {
             mRecipeDetailFragment = RecipeDetailFragment.newInstance(mRecipe, mTwoPane);
         }
+
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.frame_detail_recipe, mRecipeDetailFragment, TAG_RECIPE_DETAIL_FRAGMENT)
                 .commit();
@@ -60,6 +61,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction()
                         .remove(mStepDetailFragment)
                         .commit();
+                getSupportFragmentManager().popBackStack();
             }
         }
 

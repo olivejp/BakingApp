@@ -107,6 +107,34 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     public StepDetailFragment() {
     }
 
+    public static StepDetailFragment newInstance(int stepIndex, Recipe recipe) {
+        Bundle bundle = new Bundle();
+
+        bundle.putInt(ARG_STEP_INDEX, stepIndex);
+        bundle.putParcelable(ARG_RECIPE, recipe);
+
+        StepDetailFragment stepDetailFragment = new StepDetailFragment();
+        stepDetailFragment.setArguments(bundle);
+
+        return stepDetailFragment;
+    }
+
+    private void readBundle(Bundle bundle) {
+        if (bundle != null) {
+            if (bundle.containsKey(ARG_STEP_INDEX)) {
+                mStepIndex = bundle.getInt(ARG_STEP_INDEX);
+            }
+
+            if (bundle.containsKey(ARG_RECIPE)) {
+                mRecipe = bundle.getParcelable(ARG_RECIPE);
+            }
+
+            if (mRecipe != null) {
+                mStep = mRecipe.getSteps().get(mStepIndex);
+            }
+        }
+    }
+
     @Override
     public void OnNetworkEnable() {
         mIsConnected = true;
@@ -139,19 +167,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments().containsKey(ARG_STEP_INDEX)) {
-            mStepIndex = getArguments().getInt(ARG_STEP_INDEX);
-        }
-
-        if (getArguments().containsKey(ARG_RECIPE)) {
-            mRecipe = getArguments().getParcelable(ARG_RECIPE);
-        }
-
-        if (mRecipe != null) {
-            mStep = mRecipe.getSteps().get(mStepIndex);
-        }
-
+        readBundle(getArguments());
         initializeMediaSession();
     }
 

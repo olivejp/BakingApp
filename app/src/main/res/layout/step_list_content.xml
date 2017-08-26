@@ -5,6 +5,12 @@
     android:background="@color/colorPrimary"
     android:orientation="horizontal">
 
+    <ImageView
+        android:id="@+id/step_thumbnail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/step_thumbnail_content_description"/>
+
     <TextView
         android:id="@+id/step_short_description"
         android:layout_width="wrap_content"

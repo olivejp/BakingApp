@@ -2,8 +2,10 @@ package com.orlanth23.bakingapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.contrib.RecyclerViewActions;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -23,7 +25,7 @@ import java.util.ArrayList;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 /**
@@ -62,16 +64,24 @@ public class RecipeDetailActivityTest {
 
     @Test
     public void clickOn() throws Exception {
+        // Begin the test in portrait
+        recipeDetailActivityTestRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         // We check that the frame for the recipe detail is present
-        onView(withId(R.id.frame_detail_recipe)).check(matches(isDisplayed()));
+        onView(withId(R.id.frame_detail_recipe)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
 
         // we click on the first element of the step list
         onView(withId(R.id.recipe_detail_list_steps))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));
 
         // we check that the step description is displayed
-        onView(withId(R.id.step_description)).check(matches(isDisplayed()));
+        onView(withId(R.id.step_description)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
+
+        // Begin the test in portrait
+        recipeDetailActivityTestRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+        // we check that the step description is displayed
+        onView(withId(R.id.step_description)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
     }
 }
 

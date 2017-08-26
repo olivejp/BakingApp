@@ -24,6 +24,10 @@ import butterknife.ButterKnife;
 public class RecipeDetailFragment extends Fragment {
 
     private static final String TAG = RecipeDetailFragment.class.getName();
+
+    public static final String ARG_RECIPE = "recipe";
+    public static final String ARG_TWO_PANE = "two_pane";
+
     @BindView(R.id.recipe_detail_list_ingredients)
     RecyclerView mRecyclerViewIngredients;
     @BindView(R.id.recipe_detail_list_steps)
@@ -38,10 +42,24 @@ public class RecipeDetailFragment extends Fragment {
     }
 
     public static RecipeDetailFragment newInstance(Recipe recipe, boolean twoPane){
+        Bundle bundle = new Bundle();
         RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
-        recipeDetailFragment.setRecipe(recipe);
-        recipeDetailFragment.setTwoPane(twoPane);
+        bundle.putParcelable(ARG_RECIPE, recipe);
+        bundle.putBoolean(ARG_TWO_PANE, twoPane);
+        recipeDetailFragment.setArguments(bundle);
         return recipeDetailFragment;
+    }
+
+    private void readBundle(Bundle bundle) {
+        if (bundle != null) {
+            if (bundle.containsKey(ARG_RECIPE)) {
+                mRecipe = bundle.getParcelable(ARG_RECIPE);
+            }
+
+            if (bundle.containsKey(ARG_TWO_PANE)) {
+                mTwoPane = bundle.getBoolean(ARG_TWO_PANE);
+            }
+        }
     }
 
     public void updateFragment(boolean twoPane, Recipe recipe){
@@ -62,6 +80,7 @@ public class RecipeDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        readBundle(getArguments());
     }
 
     @Override
