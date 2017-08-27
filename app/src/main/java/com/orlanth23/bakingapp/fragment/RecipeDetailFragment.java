@@ -98,6 +98,7 @@ public class RecipeDetailFragment extends Fragment {
             mImageRecipe.setVisibility(View.VISIBLE);
             Glide.with(mActivity)
                     .load(mRecipe.getImage())
+                    .centerCrop()
                     .into(mImageRecipe);
         } else {
             mImageRecipe.setVisibility(View.GONE);

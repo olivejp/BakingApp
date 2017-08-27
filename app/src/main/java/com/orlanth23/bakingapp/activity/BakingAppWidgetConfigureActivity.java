@@ -1,4 +1,4 @@
-package com.orlanth23.bakingapp;
+package com.orlanth23.bakingapp.activity;
 
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 
+import com.orlanth23.bakingapp.BakingAppWidget;
+import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.adapter.SpinnerAdapter;
 import com.orlanth23.bakingapp.domain.Recipe;
 import com.orlanth23.bakingapp.provider.ProviderUtilities;
@@ -74,7 +76,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
 
     // Read the prefix from the SharedPreferences object for this widget.
     // If there is no preference saved, get the default from a resource
-    static long loadRecipeIdPref(Context context, int appWidgetId) {
+    public static long loadRecipeIdPref(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         long recipeId = prefs.getLong(PREF_PREFIX_KEY + appWidgetId, -1);
         if (recipeId != -1) {
@@ -84,7 +86,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
         }
     }
 
-    static void deleteRecipeIdPref(Context context, int appWidgetId) {
+    public static void deleteRecipeIdPref(Context context, int appWidgetId) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.remove(PREF_PREFIX_KEY + appWidgetId);
         prefs.apply();

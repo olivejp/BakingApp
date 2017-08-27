@@ -63,4 +63,8 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
 
     compile 'com.jayway.android.robotium:robotium-solo:5.2.1'
+
+    // Circle Image
+    // https://github.com/hdodenhof/CircleImageView
+    compile 'de.hdodenhof:circleimageview:2.1.0'
 }

@@ -196,26 +196,12 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     }
 
     private void initializeViews() {
-        String videoUrl = "";
-
-        // Search a valid video to show
-        if (!TextUtils.isEmpty(mStep.getVideoURL())) {
-            videoUrl = mStep.getVideoURL();
-        }
-
-        // Maybe the video is in the thumbnail
-        if (videoUrl.isEmpty() && !TextUtils.isEmpty(mStep.getThumbnailURL())) {
-            String extension = mStep.getThumbnailURL().substring(mStep.getThumbnailURL().lastIndexOf("."));
-            if (extension.equals(".mp4")) {
-                videoUrl = mStep.getThumbnailURL();
-            }
-        }
-
         // Initialize the player with the video URL
+        mPlayerView.setVisibility(View.GONE);
         if (mIsConnected) {
-            if (!TextUtils.isEmpty(videoUrl)) {
+            if (!TextUtils.isEmpty(mStep.getVideoURL())) {
                 mPlayerView.setVisibility(View.VISIBLE);
-                initializePlayer(Uri.parse(videoUrl));
+                initializePlayer(Uri.parse(mStep.getVideoURL()));
 
                 // In Phone screen, exoplayer is fullscreen, so there is no step description
                 if (isLandscapePhoneScreen) {
@@ -226,12 +212,10 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
                     mStepDescription.setText(mStep.getDescription());
                 }
             } else {
-                mPlayerView.setVisibility(View.GONE);
                 releasePlayer();
                 mStepDescription.setText(mStep.getDescription());
             }
         } else {
-            mPlayerView.setVisibility(View.GONE);
             releasePlayer();
             mStepDescription.setText(mStep.getDescription());
         }

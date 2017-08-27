@@ -1,13 +1,18 @@
 package com.orlanth23.bakingapp.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.activity.RecipeDetailActivity;
 import com.orlanth23.bakingapp.domain.Recipe;
@@ -24,8 +29,10 @@ import butterknife.ButterKnife;
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder> {
 
     private final List<Recipe> mRecipes;
+    private Activity mActivity;
 
-    public RecipeAdapter(List<Recipe> recipes) {
+    public RecipeAdapter(AppCompatActivity activity, List<Recipe> recipes) {
+        mActivity =activity;
         mRecipes = recipes;
     }
 
@@ -40,6 +47,16 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mRecipe = mRecipes.get(position);
         holder.mContentView.setText(mRecipes.get(position).getName());
+
+        if (!TextUtils.isEmpty(holder.mRecipe.getImage())) {
+            holder.mRecipeImage.setVisibility(View.VISIBLE);
+            Glide.with(mActivity)
+                    .load(holder.mRecipe.getImage())
+                    .centerCrop()
+                    .into(holder.mRecipeImage);
+        } else {
+            holder.mRecipeImage.setVisibility(View.GONE);
+        }
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,6 +78,10 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
         final View mView;
         @BindView(R.id.recipe_name)
         TextView mContentView;
+
+        @BindView(R.id.recipe_image)
+        ImageView mRecipeImage;
+
         Recipe mRecipe;
 
         ViewHolder(View view) {

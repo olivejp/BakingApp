@@ -20,11 +20,14 @@
             android:layout_margin="10dp"
             android:orientation="vertical">
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/recipe_detail_image"
-                android:layout_width="match_parent"
+                android:layout_width="100dp"
+                app:civ_border_width="5dp"
+                app:civ_border_color="@color/colorPrimaryDark"
                 android:layout_height="100dp"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="10dp"
                 android:contentDescription="@string/recipe_image_content_description" />
 
             <LinearLayout

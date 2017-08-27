@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.widget.RemoteViews;
 
+import com.orlanth23.bakingapp.activity.BakingAppWidgetConfigureActivity;
 import com.orlanth23.bakingapp.activity.RecipeListActivity;
 import com.orlanth23.bakingapp.domain.Recipe;
 import com.orlanth23.bakingapp.provider.ProviderUtilities;
@@ -19,7 +20,7 @@ import com.orlanth23.bakingapp.service.ListViewService;
  */
 public class BakingAppWidget extends AppWidgetProvider {
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
+    public static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
         // Get the recipe id from the shared preferences

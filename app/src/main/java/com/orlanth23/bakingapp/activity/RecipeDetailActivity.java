@@ -61,7 +61,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction()
                         .remove(mStepDetailFragment)
                         .commit();
-                getSupportFragmentManager().popBackStack();
             }
         }
 
@@ -115,8 +114,10 @@ public class RecipeDetailActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(TAG_RECIPE, mRecipe);
-
-        getSupportFragmentManager().putFragment(outState, TAG_RECIPE_DETAIL_FRAGMENT, mRecipeDetailFragment);
+        mRecipeDetailFragment = (RecipeDetailFragment) getSupportFragmentManager().findFragmentByTag(TAG_RECIPE_DETAIL_FRAGMENT);
+        if (mRecipeDetailFragment != null) {
+            getSupportFragmentManager().putFragment(outState, TAG_RECIPE_DETAIL_FRAGMENT, mRecipeDetailFragment);
+        }
 
         if (mTwoPane) {
             mStepDetailFragment = (StepDetailFragment) getSupportFragmentManager().findFragmentByTag(TAG_STEP_DETAIL_FRAGMENT);

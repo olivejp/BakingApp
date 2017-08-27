@@ -39,7 +39,7 @@
         <provider
             android:name=".provider.generated.RecipesProvider"
             android:authorities="com.orlanth23.bakingapp.RecipesProvider"
-            android:exported="true" />
+            android:exported="false" />
 
         <receiver android:name=".fragment.StepDetailFragment$MediaReceiver">
             <intent-filter>
@@ -55,7 +55,7 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/baking_app_widget_info" />
         </receiver>
-        <activity android:name=".BakingAppWidgetConfigureActivity">
+        <activity android:name=".activity.BakingAppWidgetConfigureActivity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>

@@ -107,11 +107,11 @@ public class RecipeListActivity extends AppCompatActivity implements NetworkRece
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView, ArrayList<Recipe> recipeArrayList) {
-        recyclerView.setAdapter(new RecipeAdapter(recipeArrayList));
+        recyclerView.setAdapter(new RecipeAdapter(this, recipeArrayList));
     }
 
     private void getRecipeListFromTheNet() {
-        new GetRecipesFromNetwork(this, mRecipeListTaskListener).execute();
+        new GetRecipesFromNetwork(mRecipeListTaskListener).execute();
     }
 
     @Override
