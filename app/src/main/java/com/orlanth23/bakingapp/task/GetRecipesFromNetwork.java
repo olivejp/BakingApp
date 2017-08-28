@@ -1,8 +1,10 @@
 package com.orlanth23.bakingapp.task;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 import com.orlanth23.bakingapp.Constants;
+import com.orlanth23.bakingapp.Utilities;
 import com.orlanth23.bakingapp.network.NetworkUtils;
 
 import java.net.MalformedURLException;
@@ -20,10 +22,10 @@ public class GetRecipesFromNetwork extends AsyncTask<Void, Void, String> {
      * UnComment the different lines
      * and replace the GetRecipesFromNetwork signature to test my own Json file
      **/
-    //private Context mContext;
+    private Context mContext;
 
-    // public GetRecipesFromNetwork(Context context, AsyncTaskCompleteListener<String> asyncTaskCompleteListener) {
-    public GetRecipesFromNetwork(AsyncTaskCompleteListener<String> asyncTaskCompleteListener) {
+     public GetRecipesFromNetwork(Context context, AsyncTaskCompleteListener<String> asyncTaskCompleteListener) {
+    //public GetRecipesFromNetwork(AsyncTaskCompleteListener<String> asyncTaskCompleteListener) {
         //this.mContext = context;
         this.listener = asyncTaskCompleteListener;
     }
@@ -40,9 +42,8 @@ public class GetRecipesFromNetwork extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPostExecute(String json) {
-        // json = Utilities.loadJSONFromAsset(mContext, "recipe_list.json");
-
         super.onPostExecute(json);
+        json = Utilities.loadJSONFromAsset(mContext, "recipe_list.json");
         listener.onTaskComplete(json);
     }
 }

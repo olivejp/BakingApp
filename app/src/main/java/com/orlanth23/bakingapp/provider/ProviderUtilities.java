@@ -4,13 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.orlanth23.bakingapp.domain.Ingredient;
 import com.orlanth23.bakingapp.domain.Recipe;
 import com.orlanth23.bakingapp.domain.Step;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 /**
@@ -110,6 +107,7 @@ public class ProviderUtilities {
 
     /**
      * Query the ContentProvider from the context to get the recipe list
+     *
      * @param context
      * @return List of recipe
      */
@@ -130,19 +128,6 @@ public class ProviderUtilities {
             cursorRecipe.close();
         }
         return recipeList;
-    }
-
-    /**
-     * Populate the content provider from a Json string`
-     * @param context
-     * @param json
-     */
-    public static void populateContentProviderFromJson(Context context, String json){
-        Gson gson = new Gson();
-        Type listType = new TypeToken<ArrayList<Recipe>>() {
-        }.getType();
-        final ArrayList<Recipe> tempList = gson.fromJson(json, listType);
-        populateContentProviderFromList(context, tempList);
     }
 
     /**

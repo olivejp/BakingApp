@@ -36,10 +36,15 @@
                 android:value="com.orlanth23.bakingapp.activity.RecipeListActivity" />
         </activity>
 
+        <!-- Explanation required : Hi reviewer,
+        I tried to put android:exported="false" in my provider, but my widget won't work properly because of permission.
+        But I don't understand how to configure permission with android:grantUriPermissions=true in my provider
+        and how to use the <grant-uri-permission> element. I'm looking for a good example on that point. Please.
+        -->
         <provider
             android:name=".provider.generated.RecipesProvider"
             android:authorities="com.orlanth23.bakingapp.RecipesProvider"
-            android:exported="false" />
+            android:exported="true"/>
 
         <receiver android:name=".fragment.StepDetailFragment$MediaReceiver">
             <intent-filter>
@@ -55,6 +60,7 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/baking_app_widget_info" />
         </receiver>
+
         <activity android:name=".activity.BakingAppWidgetConfigureActivity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />

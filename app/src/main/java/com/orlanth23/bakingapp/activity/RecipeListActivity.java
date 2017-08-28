@@ -111,7 +111,7 @@ public class RecipeListActivity extends AppCompatActivity implements NetworkRece
     }
 
     private void getRecipeListFromTheNet() {
-        new GetRecipesFromNetwork(mRecipeListTaskListener).execute();
+        new GetRecipesFromNetwork(this,mRecipeListTaskListener).execute();
     }
 
     @Override
