@@ -40,15 +40,16 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private void initializeFragments() {
 
         // Initialize RecipeDetailFragment
-        if (mRecipeDetailFragment != null) {
-            mRecipeDetailFragment.updateFragment(mTwoPane, mRecipe);
-        } else {
+        if (mRecipeDetailFragment == null) {
             mRecipeDetailFragment = RecipeDetailFragment.newInstance(mRecipe, mTwoPane);
+        } else {
+            mRecipeDetailFragment.updateFragment(mTwoPane, mRecipe);
         }
-
-        getSupportFragmentManager().beginTransaction()
+        getSupportFragmentManager()
+                .beginTransaction()
                 .replace(R.id.frame_detail_recipe, mRecipeDetailFragment, TAG_RECIPE_DETAIL_FRAGMENT)
                 .commit();
+
 
         // Initialize StepDetailFragment
         if (mStepDetailFragment != null) {
@@ -57,9 +58,8 @@ public class RecipeDetailActivity extends AppCompatActivity {
                         .replace(R.id.frame_step_container, mStepDetailFragment, TAG_STEP_DETAIL_FRAGMENT)
                         .commit();
             } else {
-                // Remove the stepDetailFragment cause we dont get the frame_step_container
                 getSupportFragmentManager().beginTransaction()
-                        .remove(mStepDetailFragment)
+                        .replace(R.id.frame_detail_recipe, mStepDetailFragment, TAG_STEP_DETAIL_FRAGMENT)
                         .commit();
             }
         }
@@ -119,11 +119,9 @@ public class RecipeDetailActivity extends AppCompatActivity {
             getSupportFragmentManager().putFragment(outState, TAG_RECIPE_DETAIL_FRAGMENT, mRecipeDetailFragment);
         }
 
-        if (mTwoPane) {
-            mStepDetailFragment = (StepDetailFragment) getSupportFragmentManager().findFragmentByTag(TAG_STEP_DETAIL_FRAGMENT);
-            if (mStepDetailFragment != null) {
-                getSupportFragmentManager().putFragment(outState, TAG_STEP_DETAIL_FRAGMENT, mStepDetailFragment);
-            }
+        mStepDetailFragment = (StepDetailFragment) getSupportFragmentManager().findFragmentByTag(TAG_STEP_DETAIL_FRAGMENT);
+        if (mStepDetailFragment != null) {
+            getSupportFragmentManager().putFragment(outState, TAG_STEP_DETAIL_FRAGMENT, mStepDetailFragment);
         }
     }
 }
