@@ -23,6 +23,8 @@ import java.util.ArrayList;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.swipeLeft;
+import static android.support.test.espresso.action.ViewActions.swipeUp;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
@@ -68,15 +70,18 @@ public class RecipeDetailActivityTest {
         // We check that the frame for the recipe detail is present
         onView(withId(R.id.frame_detail_recipe)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
 
-        // Check that the recyclerview is displayed
+        // Check that the recyclerview of the ingredients is displayed
+        onView(withId(R.id.recipe_detail_list_ingredients)).check(matches(isDisplayed()));
+
+        // We swipe up to the recipe's steps list
+        onView(withId(R.id.recipe_detail_container)).perform(swipeUp()).perform(swipeUp());
+
+        // Check that the recyclerview of the steps is displayed
         onView(withId(R.id.recipe_detail_list_steps)).check(matches(isDisplayed()));
 
         // we click on the first element of the step list
         onView(withId(R.id.recipe_detail_list_steps))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));
-
-        // we check that the step description is displayed
-        onView(withId(R.id.step_description)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
 
         // we check that the step description is displayed
         onView(withId(R.id.step_description)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
