@@ -51,11 +51,14 @@ public class RecipeDetailActivity extends AppCompatActivity {
         } else {
             mRecipeDetailFragment.updateFragment(mTwoPane, mRecipe);
         }
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.frame_detail_recipe, mRecipeDetailFragment, TAG_RECIPE_DETAIL_FRAGMENT)
-                .commit();
 
+        if (mTwoPane || mStepDetailFragment == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.frame_detail_recipe, mRecipeDetailFragment, TAG_RECIPE_DETAIL_FRAGMENT)
+                    .addToBackStack(null)
+                    .commit();
+        }
 
         // Initialize StepDetailFragment
         if (mStepDetailFragment != null) {
@@ -66,13 +69,11 @@ public class RecipeDetailActivity extends AppCompatActivity {
             // If the new container's id != the old then we have to remove the fragment from his old container
             Fragment fragment = getSupportFragmentManager().findFragmentById(newContainerId);
             if (fragment != null) {
-                if (fragment.getId() != mStepDetailFragment.getId()){
-                    getSupportFragmentManager().popBackStackImmediate(StepAdapter.BACKSTACK, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                if (fragment.getId() != mStepDetailFragment.getId()) {
                     getSupportFragmentManager().beginTransaction().remove(mStepDetailFragment).commit();
                     getSupportFragmentManager().executePendingTransactions();
                 }
             } else {
-                getSupportFragmentManager().popBackStackImmediate(StepAdapter.BACKSTACK, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 getSupportFragmentManager().beginTransaction().remove(mStepDetailFragment).commit();
                 getSupportFragmentManager().executePendingTransactions();
             }
@@ -123,7 +124,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            if (getSupportFragmentManager().getBackStackEntryCount() != 0) {
                 getSupportFragmentManager().popBackStack();
             } else {
                 NavUtils.navigateUpTo(this, new Intent(this, RecipeListActivity.class));

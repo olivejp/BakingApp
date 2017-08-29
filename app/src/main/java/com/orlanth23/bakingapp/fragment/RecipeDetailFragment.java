@@ -89,8 +89,6 @@ public class RecipeDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
         ButterKnife.bind(this, rootView);
 
-        updateFragment(mTwoPane, mRecipe);
-
         mRecyclerViewIngredients.setAdapter(new IngredientAdapter(mRecipe.getIngredients()));
         mRecyclerViewSteps.setAdapter(new StepAdapter(mActivity, mRecipe, mTwoPane));
 

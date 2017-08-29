@@ -66,7 +66,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     private Recipe mRecipe;
     private SimpleExoPlayer mExoPlayer;
     private boolean mIsConnected;
-    private boolean isLandscapePhoneScreen;
     private PlaybackStateCompat.Builder mStateBuilder;
     private NotificationManager mNotificationManager;
 
@@ -186,9 +185,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         // Check the internet connection
         mIsConnected = mNetworkReceiver.checkConnection(getActivity());
 
-        // The scroll_step_description_land_phone is only available on the Landscape Phone Screen
-        isLandscapePhoneScreen = (mScrollStepDescription != null);
-
         initializeViews();
 
         // BottomNavigation enable navigation between steps
@@ -207,27 +203,23 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
             if (!TextUtils.isEmpty(mStep.getVideoURL())) {
                 mPlayerView.setVisibility(View.VISIBLE);
                 initializePlayer(Uri.parse(mStep.getVideoURL()));
-
-                // In Phone screen, exoplayer is fullscreen, so there is no step description
-                if (isLandscapePhoneScreen) {
-                    if (mScrollStepDescription != null) {
-                        mScrollStepDescription.setVisibility(View.GONE);
-                    }
-                } else {
-                    mStepDescription.setText(mStep.getDescription());
-                }
             } else {
                 releasePlayer();
-                mStepDescription.setText(mStep.getDescription());
             }
         } else {
             releasePlayer();
-            mStepDescription.setText(mStep.getDescription());
+        }
+
+        // We always put the step description
+        mStepDescription.setText(mStep.getDescription());
+
+        // In Phone screen, exoplayer is fullscreen, so there is no step description
+        if (mScrollStepDescription != null && !TextUtils.isEmpty(mStep.getVideoURL())) {
+            mScrollStepDescription.setVisibility(View.GONE);
         }
     }
 
     private void initializeMediaSession() {
-
         // Create a MediaSessionCompat.
         mMediaSession = new MediaSessionCompat(getActivity(), TAG);
 
@@ -266,15 +258,18 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
 
             // Set the ExoPlayer.EventListener to this activity.
             mExoPlayer.addListener(this);
-
-            // Prepare the MediaSource.
-            String userAgent = Util.getUserAgent(getActivity(), getString(R.string.app_name));
-
-            MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
-                    getActivity(), userAgent), new DefaultExtractorsFactory(), null, null);
-            mExoPlayer.prepare(mediaSource);
-            mExoPlayer.setPlayWhenReady(true);
         }
+
+        changeMedia(mediaUri);
+    }
+
+    private void changeMedia(Uri mediaUri) {
+        // Prepare the MediaSource.
+        String userAgent = Util.getUserAgent(getActivity(), getString(R.string.app_name));
+        MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
+                getActivity(), userAgent), new DefaultExtractorsFactory(), null, null);
+        mExoPlayer.prepare(mediaSource);
+        mExoPlayer.setPlayWhenReady(true);
     }
 
     private void showNotification(PlaybackStateCompat state) {
@@ -323,27 +318,28 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
             mExoPlayer.release();
             mExoPlayer = null;
         }
+        if (mMediaSession != null) {
+            mMediaSession.setActive(false);
+            mMediaSession.release();
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
         releasePlayer();
-        mMediaSession.setActive(false);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         releasePlayer();
-        mMediaSession.setActive(false);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         releasePlayer();
-        mMediaSession.setActive(false);
     }
 
     @Override
