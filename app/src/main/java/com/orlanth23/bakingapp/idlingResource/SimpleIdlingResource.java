@@ -1,4 +1,4 @@
-package com.orlanth23.bakingapp.IdlingResource;
+package com.orlanth23.bakingapp.idlingResource;
 
 import android.support.annotation.Nullable;
 import android.support.test.espresso.IdlingResource;

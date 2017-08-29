@@ -31,7 +31,7 @@ import butterknife.ButterKnife;
 public class StepAdapter
         extends RecyclerView.Adapter<StepAdapter.ViewHolder> {
 
-    private static final String BACKSTACK = "StepAdapterBackStack";
+    public static final String BACKSTACK = "StepAdapterBackStack";
 
     private final Recipe mRecipe;
     private boolean mTwoPane;

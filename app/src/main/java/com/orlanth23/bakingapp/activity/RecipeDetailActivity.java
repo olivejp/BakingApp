@@ -3,15 +3,21 @@ package com.orlanth23.bakingapp.activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.orlanth23.bakingapp.Constants;
 import com.orlanth23.bakingapp.R;
+import com.orlanth23.bakingapp.adapter.StepAdapter;
 import com.orlanth23.bakingapp.domain.Recipe;
 import com.orlanth23.bakingapp.fragment.RecipeDetailFragment;
 import com.orlanth23.bakingapp.fragment.StepDetailFragment;
@@ -53,6 +59,25 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
         // Initialize StepDetailFragment
         if (mStepDetailFragment != null) {
+
+            int newContainerId = (mTwoPane) ? R.id.frame_step_container : R.id.frame_detail_recipe;
+
+            // Compare the Id of the container's fragment with the id of the new container's id
+            // If the new container's id != the old then we have to remove the fragment from his old container
+            Fragment fragment = getSupportFragmentManager().findFragmentById(newContainerId);
+            if (fragment != null) {
+                if (fragment.getId() != mStepDetailFragment.getId()){
+                    getSupportFragmentManager().popBackStackImmediate(StepAdapter.BACKSTACK, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    getSupportFragmentManager().beginTransaction().remove(mStepDetailFragment).commit();
+                    getSupportFragmentManager().executePendingTransactions();
+                }
+            } else {
+                getSupportFragmentManager().popBackStackImmediate(StepAdapter.BACKSTACK, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                getSupportFragmentManager().beginTransaction().remove(mStepDetailFragment).commit();
+                getSupportFragmentManager().executePendingTransactions();
+            }
+
+            // Create fragment transaction but not commited yet
             if (mTwoPane) {
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.frame_step_container, mStepDetailFragment, TAG_STEP_DETAIL_FRAGMENT)
@@ -63,8 +88,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
                         .commit();
             }
         }
-
-        getSupportFragmentManager().executePendingTransactions();
     }
 
     @Override

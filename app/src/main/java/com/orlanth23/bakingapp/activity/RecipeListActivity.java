@@ -18,7 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.orlanth23.bakingapp.Constants;
-import com.orlanth23.bakingapp.IdlingResource.SimpleIdlingResource;
+import com.orlanth23.bakingapp.idlingResource.SimpleIdlingResource;
 import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.adapter.RecipeAdapter;
 import com.orlanth23.bakingapp.broadcast.NetworkReceiver;
@@ -111,7 +111,7 @@ public class RecipeListActivity extends AppCompatActivity implements NetworkRece
     }
 
     private void getRecipeListFromTheNet() {
-        new GetRecipesFromNetwork(mRecipeListTaskListener).execute();
+        new GetRecipesFromNetwork(this, mRecipeListTaskListener).execute();
     }
 
     @Override

@@ -41,7 +41,7 @@ public class RecipeDetailFragment extends Fragment {
     public RecipeDetailFragment() {
     }
 
-    public static RecipeDetailFragment newInstance(Recipe recipe, boolean twoPane){
+    public static RecipeDetailFragment newInstance(Recipe recipe, boolean twoPane) {
         Bundle bundle = new Bundle();
         RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
         bundle.putParcelable(ARG_RECIPE, recipe);
@@ -62,7 +62,7 @@ public class RecipeDetailFragment extends Fragment {
         }
     }
 
-    public void updateFragment(boolean twoPane, Recipe recipe){
+    public void updateFragment(boolean twoPane, Recipe recipe) {
         mRecipe = recipe;
         mTwoPane = twoPane;
     }
@@ -72,8 +72,8 @@ public class RecipeDetailFragment extends Fragment {
         super.onAttach(context);
         try {
             mActivity = (AppCompatActivity) context;
-        } catch (ClassCastException e){
-            Log.e(TAG, getString(R.string.recipedetailfragment_need_appcompatactivity),e);
+        } catch (ClassCastException e) {
+            Log.e(TAG, getString(R.string.recipedetailfragment_need_appcompatactivity), e);
         }
     }
 
@@ -109,9 +109,5 @@ public class RecipeDetailFragment extends Fragment {
 
     public void setRecipe(Recipe mRecipe) {
         this.mRecipe = mRecipe;
-    }
-
-    public void setTwoPane(boolean mTwoPane) {
-        this.mTwoPane = mTwoPane;
     }
 }

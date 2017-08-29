@@ -174,6 +174,11 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Get back the previous data
+        if (savedInstanceState != null) {
+            readBundle(savedInstanceState);
+        }
+
         View rootView = inflater.inflate(R.layout.fragment_step_detail, container, false);
 
         ButterKnife.bind(this, rootView);
@@ -381,6 +386,14 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     @Override
     public void onPositionDiscontinuity() {
 
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(ARG_RECIPE, mRecipe);
+        outState.putInt(ARG_STEP_INDEX, mStepIndex);
     }
 
     public static class MediaReceiver extends BroadcastReceiver {
