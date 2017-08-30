@@ -86,6 +86,7 @@ public class StepAdapter
                     mAppCompatActivity.getSupportFragmentManager()
                             .beginTransaction()
                             .replace(R.id.frame_detail_recipe, fragment, RecipeDetailActivity.TAG_STEP_DETAIL_FRAGMENT)
+                            .addToBackStack(BACKSTACK)
                             .commit();
                 }
             }

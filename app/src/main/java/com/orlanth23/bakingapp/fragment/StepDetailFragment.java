@@ -60,14 +60,15 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     public static final String ARG_STEP_INDEX = "step_index";
     public static final String ARG_RECIPE = "recipe";
 
-    private static MediaSessionCompat mMediaSession;
     private Step mStep;
     private int mStepIndex;
     private Recipe mRecipe;
     private SimpleExoPlayer mExoPlayer;
+    private static MediaSessionCompat mMediaSession;
     private boolean mIsConnected;
-    private PlaybackStateCompat.Builder mStateBuilder;
     private NotificationManager mNotificationManager;
+    private NetworkReceiver mNetworkReceiver;
+    private PlaybackStateCompat.Builder mStateBuilder;
 
     @BindView(R.id.player_view)
     SimpleExoPlayerView mPlayerView;
@@ -76,7 +77,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     @Nullable
     @BindView(R.id.scroll_step_description_land_phone)
     ScrollView mScrollStepDescription;
-    private NetworkReceiver mNetworkReceiver;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -196,7 +196,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         return rootView;
     }
 
-    private void initializeViews() {
+    public void initializeViews() {
         // Initialize the player with the video URL
         mPlayerView.setVisibility(View.GONE);
         if (mIsConnected) {
@@ -218,35 +218,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         if (mScrollStepDescription != null && !TextUtils.isEmpty(mStep.getVideoURL())) {
             mScrollStepDescription.setVisibility(View.GONE);
         }
-    }
-
-    private void initializeMediaSession() {
-        // Create a MediaSessionCompat.
-        mMediaSession = new MediaSessionCompat(getActivity(), TAG);
-
-        // Enable callbacks from MediaButtons and TransportControls.
-        mMediaSession.setFlags(
-                MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
-                        MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
-
-        // Do not let MediaButtons restart the player when the app is not visible.
-        mMediaSession.setMediaButtonReceiver(null);
-
-        // Set an initial PlaybackState with ACTION_PLAY, so media buttons can start the player.
-        mStateBuilder = new PlaybackStateCompat.Builder()
-                .setActions(
-                        PlaybackStateCompat.ACTION_PLAY |
-                                PlaybackStateCompat.ACTION_PAUSE |
-                                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
-                                PlaybackStateCompat.ACTION_PLAY_PAUSE);
-
-        mMediaSession.setPlaybackState(mStateBuilder.build());
-
-        // MySessionCallback has methods that handle callbacks from a media controller.
-        mMediaSession.setCallback(new MySessionCallback());
-
-        // Start the Media Session since the activity is active.
-        mMediaSession.setActive(true);
     }
 
     private void initializePlayer() {
@@ -383,12 +354,40 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
 
     }
 
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(ARG_RECIPE, mRecipe);
         outState.putInt(ARG_STEP_INDEX, mStepIndex);
+    }
+
+    private void initializeMediaSession() {
+        // Create a MediaSessionCompat.
+        mMediaSession = new MediaSessionCompat(getContext(), TAG);
+
+        // Enable callbacks from MediaButtons and TransportControls.
+        mMediaSession.setFlags(
+                MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
+                        MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+
+        // Do not let MediaButtons restart the player when the app is not visible.
+        mMediaSession.setMediaButtonReceiver(null);
+
+        // Set an initial PlaybackState with ACTION_PLAY, so media buttons can start the player.
+        mStateBuilder = new PlaybackStateCompat.Builder()
+                .setActions(
+                        PlaybackStateCompat.ACTION_PLAY |
+                                PlaybackStateCompat.ACTION_PAUSE |
+                                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
+                                PlaybackStateCompat.ACTION_PLAY_PAUSE);
+
+        mMediaSession.setPlaybackState(mStateBuilder.build());
+
+        // MySessionCallback has methods that handle callbacks from a media controller.
+        mMediaSession.setCallback(new StepDetailFragment.MySessionCallback());
+
+        // Start the Media Session since the activity is active.
+        mMediaSession.setActive(true);
     }
 
     public static class MediaReceiver extends BroadcastReceiver {

@@ -5,14 +5,11 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.orlanth23.bakingapp.Constants;
@@ -24,10 +21,11 @@ import com.orlanth23.bakingapp.fragment.StepDetailFragment;
 
 public class RecipeDetailActivity extends AppCompatActivity {
 
-    public static final String TAG_STEP_DETAIL_FRAGMENT = "TAG_STEP_DETAIL_FRAGMENT";
     public static final String ARG_RECIPE = "ARG_RECIPE";
-    private static final String TAG_RECIPE_DETAIL_FRAGMENT = "TAG_RECIPE_DETAIL_FRAGMENT";
     private static final String TAG_RECIPE = "TAG_RECIPE";
+    private static final String TAG_RECIPE_DETAIL_FRAGMENT = "TAG_RECIPE_DETAIL_FRAGMENT";
+    public static final String TAG_STEP_DETAIL_FRAGMENT = "TAG_STEP_DETAIL_FRAGMENT";
+
     private RecipeDetailFragment mRecipeDetailFragment;
     private StepDetailFragment mStepDetailFragment;
     private Recipe mRecipe;
@@ -67,7 +65,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == android.R.id.home) {
             if (getSupportFragmentManager().getBackStackEntryCount() != 0) {
-                getSupportFragmentManager().popBackStack();
+                getSupportFragmentManager().popBackStackImmediate();
             } else {
                 NavUtils.navigateUpTo(this, new Intent(this, RecipeListActivity.class));
             }
@@ -88,6 +86,14 @@ public class RecipeDetailActivity extends AppCompatActivity {
         mStepDetailFragment = (StepDetailFragment) getSupportFragmentManager().findFragmentByTag(TAG_STEP_DETAIL_FRAGMENT);
         if (mStepDetailFragment != null) {
             getSupportFragmentManager().putFragment(outState, TAG_STEP_DETAIL_FRAGMENT, mStepDetailFragment);
+        }
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        if (mStepDetailFragment != null){
+            mStepDetailFragment.initializeViews();
         }
     }
 
@@ -127,10 +133,12 @@ public class RecipeDetailActivity extends AppCompatActivity {
             Fragment fragment = getSupportFragmentManager().findFragmentById(newContainerId);
             if (fragment != null) {
                 if (fragment.getId() != mStepDetailFragment.getId()) {
+                    getSupportFragmentManager().popBackStackImmediate(StepAdapter.BACKSTACK, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     getSupportFragmentManager().beginTransaction().remove(mStepDetailFragment).commit();
                     getSupportFragmentManager().executePendingTransactions();
                 }
             } else {
+                getSupportFragmentManager().popBackStackImmediate(StepAdapter.BACKSTACK, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 getSupportFragmentManager().beginTransaction().remove(mStepDetailFragment).commit();
                 getSupportFragmentManager().executePendingTransactions();
             }
