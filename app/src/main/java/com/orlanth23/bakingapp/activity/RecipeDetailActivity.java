@@ -33,64 +33,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private Recipe mRecipe;
     private boolean mTwoPane;
 
-    private void getFromSavedInstanceState(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            mRecipe = savedInstanceState.getParcelable(TAG_RECIPE);
-            mRecipeDetailFragment = (RecipeDetailFragment) getSupportFragmentManager().getFragment(savedInstanceState, TAG_RECIPE_DETAIL_FRAGMENT);
-            mStepDetailFragment = (StepDetailFragment) getSupportFragmentManager().getFragment(savedInstanceState, TAG_STEP_DETAIL_FRAGMENT);
-        } else {
-            mRecipe = getIntent().getParcelableExtra(ARG_RECIPE);
-        }
-    }
-
-    private void initializeFragments() {
-
-        // Initialize RecipeDetailFragment
-        if (mRecipeDetailFragment == null) {
-            mRecipeDetailFragment = RecipeDetailFragment.newInstance(mRecipe, mTwoPane);
-        } else {
-            mRecipeDetailFragment.updateFragment(mTwoPane, mRecipe);
-        }
-
-        if (mTwoPane || mStepDetailFragment == null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.frame_detail_recipe, mRecipeDetailFragment, TAG_RECIPE_DETAIL_FRAGMENT)
-                    .addToBackStack(null)
-                    .commit();
-        }
-
-        // Initialize StepDetailFragment
-        if (mStepDetailFragment != null) {
-
-            int newContainerId = (mTwoPane) ? R.id.frame_step_container : R.id.frame_detail_recipe;
-
-            // Compare the Id of the container's fragment with the id of the new container's id
-            // If the new container's id != the old then we have to remove the fragment from his old container
-            Fragment fragment = getSupportFragmentManager().findFragmentById(newContainerId);
-            if (fragment != null) {
-                if (fragment.getId() != mStepDetailFragment.getId()) {
-                    getSupportFragmentManager().beginTransaction().remove(mStepDetailFragment).commit();
-                    getSupportFragmentManager().executePendingTransactions();
-                }
-            } else {
-                getSupportFragmentManager().beginTransaction().remove(mStepDetailFragment).commit();
-                getSupportFragmentManager().executePendingTransactions();
-            }
-
-            // Create fragment transaction but not commited yet
-            if (mTwoPane) {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.frame_step_container, mStepDetailFragment, TAG_STEP_DETAIL_FRAGMENT)
-                        .commit();
-            } else {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.frame_detail_recipe, mStepDetailFragment, TAG_STEP_DETAIL_FRAGMENT)
-                        .commit();
-            }
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,4 +90,62 @@ public class RecipeDetailActivity extends AppCompatActivity {
             getSupportFragmentManager().putFragment(outState, TAG_STEP_DETAIL_FRAGMENT, mStepDetailFragment);
         }
     }
+
+    private void getFromSavedInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            mRecipe = savedInstanceState.getParcelable(TAG_RECIPE);
+            mRecipeDetailFragment = (RecipeDetailFragment) getSupportFragmentManager().getFragment(savedInstanceState, TAG_RECIPE_DETAIL_FRAGMENT);
+            mStepDetailFragment = (StepDetailFragment) getSupportFragmentManager().getFragment(savedInstanceState, TAG_STEP_DETAIL_FRAGMENT);
+        } else {
+            mRecipe = getIntent().getParcelableExtra(ARG_RECIPE);
+        }
+    }
+
+    private void initializeFragments() {
+
+        // Initialize RecipeDetailFragment
+        if (mRecipeDetailFragment == null) {
+            mRecipeDetailFragment = RecipeDetailFragment.newInstance(mRecipe, mTwoPane);
+        } else {
+            mRecipeDetailFragment.updateFragment(mTwoPane, mRecipe);
+        }
+
+        if (mTwoPane || mStepDetailFragment == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.frame_detail_recipe, mRecipeDetailFragment, TAG_RECIPE_DETAIL_FRAGMENT)
+                    .commit();
+        }
+
+        // Initialize StepDetailFragment
+        if (mStepDetailFragment != null) {
+
+            int newContainerId = (mTwoPane) ? R.id.frame_step_container : R.id.frame_detail_recipe;
+
+            // Compare the Id of the container's fragment with the id of the new container's id
+            // If the new container's id != the old then we have to remove the fragment from his old container
+            Fragment fragment = getSupportFragmentManager().findFragmentById(newContainerId);
+            if (fragment != null) {
+                if (fragment.getId() != mStepDetailFragment.getId()) {
+                    getSupportFragmentManager().beginTransaction().remove(mStepDetailFragment).commit();
+                    getSupportFragmentManager().executePendingTransactions();
+                }
+            } else {
+                getSupportFragmentManager().beginTransaction().remove(mStepDetailFragment).commit();
+                getSupportFragmentManager().executePendingTransactions();
+            }
+
+            // Create fragment transaction but not commited yet
+            if (mTwoPane) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.frame_step_container, mStepDetailFragment, TAG_STEP_DETAIL_FRAGMENT)
+                        .commit();
+            } else {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.frame_detail_recipe, mStepDetailFragment, TAG_STEP_DETAIL_FRAGMENT)
+                        .commit();
+            }
+        }
+    }
+
 }

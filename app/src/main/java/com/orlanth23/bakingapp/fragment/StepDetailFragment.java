@@ -202,12 +202,13 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         if (mIsConnected) {
             if (!TextUtils.isEmpty(mStep.getVideoURL())) {
                 mPlayerView.setVisibility(View.VISIBLE);
-                initializePlayer(Uri.parse(mStep.getVideoURL()));
+                initializePlayer();
+                changeMedia(Uri.parse(mStep.getVideoURL()));
             } else {
-                releasePlayer();
+                releasePlayerAndMediaSession();
             }
         } else {
-            releasePlayer();
+            releasePlayerAndMediaSession();
         }
 
         // We always put the step description
@@ -248,7 +249,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         mMediaSession.setActive(true);
     }
 
-    private void initializePlayer(Uri mediaUri) {
+    private void initializePlayer() {
         if (mExoPlayer == null) {
             // Create an instance of the ExoPlayer.
             TrackSelector trackSelector = new DefaultTrackSelector();
@@ -259,8 +260,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
             // Set the ExoPlayer.EventListener to this activity.
             mExoPlayer.addListener(this);
         }
-
-        changeMedia(mediaUri);
     }
 
     private void changeMedia(Uri mediaUri) {
@@ -309,7 +308,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         mNotificationManager.notify(0, builder.build());
     }
 
-    private void releasePlayer() {
+    private void releasePlayerAndMediaSession() {
         if (mNotificationManager != null) {
             mNotificationManager.cancelAll();
         }
@@ -327,19 +326,19 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     @Override
     public void onPause() {
         super.onPause();
-        releasePlayer();
+        releasePlayerAndMediaSession();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        releasePlayer();
+        releasePlayerAndMediaSession();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        releasePlayer();
+        releasePlayerAndMediaSession();
     }
 
     @Override
