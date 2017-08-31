@@ -2,6 +2,7 @@ package com.orlanth23.bakingapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.espresso.matcher.ViewMatchers;
@@ -64,16 +65,14 @@ public class RecipeDetailActivityTest {
     @Rule
     public CustomActivityTestRule<RecipeDetailActivity> recipeDetailActivityTestRule = new CustomActivityTestRule<>(RecipeDetailActivity.class, null, getIntentListener);
 
-    @Test
-    public void clickOn() throws Exception {
-
+    public void checkClickOn() {
         // We check that the frame for the recipe detail is present
         onView(withId(R.id.frame_detail_recipe)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
 
         // Check that the recyclerview of the ingredients is displayed
         onView(withId(R.id.recipe_detail_list_ingredients)).check(matches(isDisplayed()));
 
-        // We swipe up to the recipe's steps list
+        // We double swipe up to the recipe's steps list
         onView(withId(R.id.recipe_detail_container)).perform(swipeUp()).perform(swipeUp());
 
         // Check that the recyclerview of the steps is displayed
@@ -85,6 +84,22 @@ public class RecipeDetailActivityTest {
 
         // we check that the step description is displayed
         onView(withId(R.id.step_description)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
+    }
+
+    @Test
+    public void clickOnPortrait() throws Exception {
+        // Change the orientation
+        recipeDetailActivityTestRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        checkClickOn();
+    }
+
+    @Test
+    public void clickOnLandscape() throws Exception {
+        // Change the orientation
+        recipeDetailActivityTestRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+        checkClickOn();
     }
 }
 
