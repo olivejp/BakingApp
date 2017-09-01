@@ -19,7 +19,7 @@ import com.orlanth23.bakingapp.domain.Recipe;
 import com.orlanth23.bakingapp.fragment.RecipeDetailFragment;
 import com.orlanth23.bakingapp.fragment.StepDetailFragment;
 
-public class RecipeDetailActivity extends AppCompatActivity {
+public class RecipeDetailActivity extends AppCompatActivity implements  RecipeDetailFragment.GetTwoPaneActivity{
 
     public static final String ARG_RECIPE = "ARG_RECIPE";
     private static final String TAG_RECIPE = "TAG_RECIPE";
@@ -92,7 +92,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        if (mStepDetailFragment != null){
+        if (mStepDetailFragment != null) {
             mStepDetailFragment.initializeViews();
         }
     }
@@ -108,12 +108,52 @@ public class RecipeDetailActivity extends AppCompatActivity {
     }
 
     private void initializeFragments() {
+        // Remove the fragments from their old containers
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStackImmediate(StepAdapter.BACKSTACK, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.frame_detail_recipe);
+        if (fragment != null) {
+            getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+        }
+
+        fragment = getSupportFragmentManager().findFragmentById(R.id.frame_step_container);
+        if (fragment != null) {
+            getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+        }
+        getSupportFragmentManager().executePendingTransactions();
 
         // Initialize RecipeDetailFragment
         if (mRecipeDetailFragment == null) {
-            mRecipeDetailFragment = RecipeDetailFragment.newInstance(mRecipe, mTwoPane);
-        } else {
-            mRecipeDetailFragment.updateFragment(mTwoPane, mRecipe);
+            mRecipeDetailFragment = RecipeDetailFragment.newInstance(mRecipe);
+        }
+
+        if (mTwoPane || mStepDetailFragment == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.frame_detail_recipe, mRecipeDetailFragment, TAG_RECIPE_DETAIL_FRAGMENT)
+                    .commit();
+        }
+
+        // Initialize StepDetailFragment
+        if (mStepDetailFragment != null) {
+            if (mTwoPane) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.frame_step_container, mStepDetailFragment, TAG_STEP_DETAIL_FRAGMENT)
+                        .commit();
+            } else {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.frame_detail_recipe, mStepDetailFragment, TAG_STEP_DETAIL_FRAGMENT)
+                        .commit();
+            }
+        }
+    }
+
+    private void initializeFragments1() {
+
+        // Initialize RecipeDetailFragment
+        if (mRecipeDetailFragment == null) {
+            mRecipeDetailFragment = RecipeDetailFragment.newInstance(mRecipe);
         }
 
         if (mTwoPane || mStepDetailFragment == null) {
@@ -126,11 +166,11 @@ public class RecipeDetailActivity extends AppCompatActivity {
         // Initialize StepDetailFragment
         if (mStepDetailFragment != null) {
 
-            int newContainerId = (mTwoPane) ? R.id.frame_step_container : R.id.frame_detail_recipe;
+            int destinationContainerId = (mTwoPane) ? R.id.frame_step_container : R.id.frame_detail_recipe;
 
             // Compare the Id of the container's fragment with the id of the new container's id
             // If the new container's id != the old then we have to remove the fragment from his old container
-            Fragment fragment = getSupportFragmentManager().findFragmentById(newContainerId);
+            Fragment fragment = getSupportFragmentManager().findFragmentById(destinationContainerId);
             if (fragment != null) {
                 if (fragment.getId() != mStepDetailFragment.getId()) {
                     getSupportFragmentManager().popBackStackImmediate(StepAdapter.BACKSTACK, FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -156,4 +196,8 @@ public class RecipeDetailActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean getTwoPane() {
+        return mTwoPane;
+    }
 }

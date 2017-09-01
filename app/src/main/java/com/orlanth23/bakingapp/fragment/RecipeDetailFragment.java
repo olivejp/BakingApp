@@ -26,7 +26,6 @@ public class RecipeDetailFragment extends Fragment {
     private static final String TAG = RecipeDetailFragment.class.getName();
 
     public static final String ARG_RECIPE = "recipe";
-    public static final String ARG_TWO_PANE = "two_pane";
 
     @BindView(R.id.recipe_detail_list_ingredients)
     RecyclerView mRecyclerViewIngredients;
@@ -35,17 +34,16 @@ public class RecipeDetailFragment extends Fragment {
     @BindView(R.id.recipe_detail_image)
     ImageView mImageRecipe;
     private Recipe mRecipe;
-    private boolean mTwoPane;
     private AppCompatActivity mActivity;
+    private GetTwoPaneActivity mTwoPaneActivity;
 
     public RecipeDetailFragment() {
     }
 
-    public static RecipeDetailFragment newInstance(Recipe recipe, boolean twoPane) {
+    public static RecipeDetailFragment newInstance(Recipe recipe) {
         Bundle bundle = new Bundle();
         RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
         bundle.putParcelable(ARG_RECIPE, recipe);
-        bundle.putBoolean(ARG_TWO_PANE, twoPane);
         recipeDetailFragment.setArguments(bundle);
         return recipeDetailFragment;
     }
@@ -55,16 +53,7 @@ public class RecipeDetailFragment extends Fragment {
             if (bundle.containsKey(ARG_RECIPE)) {
                 mRecipe = bundle.getParcelable(ARG_RECIPE);
             }
-
-            if (bundle.containsKey(ARG_TWO_PANE)) {
-                mTwoPane = bundle.getBoolean(ARG_TWO_PANE);
-            }
         }
-    }
-
-    public void updateFragment(boolean twoPane, Recipe recipe) {
-        mRecipe = recipe;
-        mTwoPane = twoPane;
     }
 
     @Override
@@ -75,22 +64,30 @@ public class RecipeDetailFragment extends Fragment {
         } catch (ClassCastException e) {
             Log.e(TAG, getString(R.string.recipedetailfragment_need_appcompatactivity), e);
         }
+
+        try {
+            mTwoPaneActivity = (GetTwoPaneActivity) context;
+        } catch (ClassCastException e) {
+            Log.e(TAG, getString(R.string.recipedetailfragment_need_gettwopaneactivity), e);
+        }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        readBundle(getArguments());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
+
+        readBundle(getArguments());
+
         ButterKnife.bind(this, rootView);
 
         mRecyclerViewIngredients.setAdapter(new IngredientAdapter(mRecipe.getIngredients()));
-        mRecyclerViewSteps.setAdapter(new StepAdapter(mActivity, mRecipe, mTwoPane));
+        mRecyclerViewSteps.setAdapter(new StepAdapter(mActivity, mRecipe, mTwoPaneActivity.getTwoPane()));
 
         if (!TextUtils.isEmpty(mRecipe.getImage())) {
             mImageRecipe.setVisibility(View.VISIBLE);
@@ -107,5 +104,9 @@ public class RecipeDetailFragment extends Fragment {
 
     public void setRecipe(Recipe mRecipe) {
         this.mRecipe = mRecipe;
+    }
+
+    public interface GetTwoPaneActivity {
+        boolean getTwoPane();
     }
 }

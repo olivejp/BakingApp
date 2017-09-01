@@ -15,6 +15,7 @@ import com.orlanth23.bakingapp.activity.RecipeDetailActivity;
 import com.orlanth23.bakingapp.domain.Recipe;
 import com.orlanth23.bakingapp.provider.ProviderUtilities;
 
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,8 +25,8 @@ import java.util.ArrayList;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.swipeUp;
+import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
@@ -50,13 +51,15 @@ public class RecipeDetailActivityTest {
             Type listType = new TypeToken<ArrayList<Recipe>>() {
             }.getType();
             Gson gson = new Gson();
-            ArrayList<Recipe> mArrayList = gson.fromJson(json, listType);
-            ProviderUtilities.populateContentProviderFromList(mContext, mArrayList);
 
-            // Create an intent and return it
+            // Okay we 've got the list in a json let's just transform to an arrayList and send it to the content provider.
+            ArrayList<Recipe> mRecipeList = gson.fromJson(json, listType);
+            ProviderUtilities.populateContentProviderFromList(mContext, mRecipeList);
+
+            // Create an intent with the first recipe of the list send it to the activity
             Intent intent = new Intent();
-            if (mArrayList != null) {
-                intent.putExtra(RecipeDetailActivity.ARG_RECIPE, mArrayList.get(1));
+            if (mRecipeList != null) {
+                intent.putExtra(RecipeDetailActivity.ARG_RECIPE, mRecipeList.get(1));
             }
             return intent;
         }
@@ -65,41 +68,79 @@ public class RecipeDetailActivityTest {
     @Rule
     public CustomActivityTestRule<RecipeDetailActivity> recipeDetailActivityTestRule = new CustomActivityTestRule<>(RecipeDetailActivity.class, null, getIntentListener);
 
-    public void checkClickOn() {
+    public void clickOnFirstStep(int orientation) {
+        // Change the orientation
+        recipeDetailActivityTestRule.getActivity().setRequestedOrientation(orientation);
+
         // We check that the frame for the recipe detail is present
         onView(withId(R.id.frame_detail_recipe)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
 
         // Check that the recyclerview of the ingredients is displayed
         onView(withId(R.id.recipe_detail_list_ingredients)).check(matches(isDisplayed()));
 
-        // We double swipe up to the recipe's steps list
-        onView(withId(R.id.recipe_detail_container)).perform(swipeUp()).perform(swipeUp());
+        // We swipe up to the recipe's steps list
+        onView(withId(R.id.recipe_detail_container)).perform(swipeUp());
 
         // Check that the recyclerview of the steps is displayed
         onView(withId(R.id.recipe_detail_list_steps)).check(matches(isDisplayed()));
 
         // we click on the first element of the step list
         onView(withId(R.id.recipe_detail_list_steps))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
-        // we check that the step description is displayed
-        onView(withId(R.id.step_description)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
+        if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+            if (TestUtilities.isTablet(recipeDetailActivityTestRule.getActivity())) {
+                // we check that the step description is displayed (only available on tablet)
+                onView(withId(R.id.step_description)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
+            } else {
+                onView(withId(R.id.player_view)).check(matches(isDisplayed()));
+            }
+        } else {
+            onView(withId(R.id.step_description)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
+        }
     }
 
     @Test
-    public void clickOnPortrait() throws Exception {
+    public void clickOnFirstStepPortrait() throws Exception {
+        // Change the orientation
+        clickOnFirstStep(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
+
+    @Test
+    public void clickOnFirstStepLandscape() throws Exception {
+        // Change the orientation
+        clickOnFirstStep(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+    }
+
+    @Test
+    public void rotationPortraitToLandscape() throws Exception {
         // Change the orientation
         recipeDetailActivityTestRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        checkClickOn();
-    }
+        // We check that the frame for the recipe detail is present
+        onView(withId(R.id.frame_detail_recipe)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
 
-    @Test
-    public void clickOnLandscape() throws Exception {
         // Change the orientation
         recipeDetailActivityTestRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-        checkClickOn();
+        // We check that the frame for the recipe detail is present
+        onView(withId(R.id.frame_detail_recipe)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
+    }
+
+    @Test
+    public void checkRotationMasterDetailFlowOnTablet() throws Exception {
+        if (TestUtilities.isTablet(recipeDetailActivityTestRule.getActivity())) {
+            // Click on the first step
+            clickOnFirstStep(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+            // Change the orientation
+            recipeDetailActivityTestRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+            // we check that the player is displayed
+            onView(withId(R.id.player_view)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
+        } else {
+            Assert.assertTrue(true);
+        }
     }
 }
 

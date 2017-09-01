@@ -1,12 +1,16 @@
 package com.orlanth23.bakingapp;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Display;
 
 import com.orlanth23.bakingapp.provider.IngredientInterface;
 import com.orlanth23.bakingapp.provider.RecipeInterface;
@@ -35,6 +39,15 @@ class TestUtilities {
     private static final String INGREDIENT_MEASURE = "measure";
     private static final double INGREDIENT_QUANTITY = 2.5;
 
+    static boolean isTablet(AppCompatActivity activity) {
+        Display display = activity.getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+
+        return (width >= 1800 || height >= 1800);
+    }
 
     static void validateCursor(String error, Cursor valueCursor, ContentValues expectedValues) {
         assertTrue("Empty cursor returned. " + error, valueCursor.moveToFirst());
