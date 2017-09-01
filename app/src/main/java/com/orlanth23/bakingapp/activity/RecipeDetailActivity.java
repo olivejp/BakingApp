@@ -66,8 +66,11 @@ public class RecipeDetailActivity extends AppCompatActivity implements  RecipeDe
         if (id == android.R.id.home) {
             if (getSupportFragmentManager().getBackStackEntryCount() != 0) {
                 getSupportFragmentManager().popBackStackImmediate();
-            } else {
-                NavUtils.navigateUpTo(this, new Intent(this, RecipeListActivity.class));
+            }
+            else {
+                Intent intent = NavUtils.getParentActivityIntent(this);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                NavUtils.navigateUpTo(this, intent);
             }
             return true;
         }
@@ -137,55 +140,6 @@ public class RecipeDetailActivity extends AppCompatActivity implements  RecipeDe
 
         // Initialize StepDetailFragment
         if (mStepDetailFragment != null) {
-            if (mTwoPane) {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.frame_step_container, mStepDetailFragment, TAG_STEP_DETAIL_FRAGMENT)
-                        .commit();
-            } else {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.frame_detail_recipe, mStepDetailFragment, TAG_STEP_DETAIL_FRAGMENT)
-                        .commit();
-            }
-        }
-    }
-
-    private void initializeFragments1() {
-
-        // Initialize RecipeDetailFragment
-        if (mRecipeDetailFragment == null) {
-            mRecipeDetailFragment = RecipeDetailFragment.newInstance(mRecipe);
-        }
-
-        if (mTwoPane || mStepDetailFragment == null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.frame_detail_recipe, mRecipeDetailFragment, TAG_RECIPE_DETAIL_FRAGMENT)
-                    .commit();
-        }
-
-        // Initialize StepDetailFragment
-        if (mStepDetailFragment != null) {
-
-            int destinationContainerId = (mTwoPane) ? R.id.frame_step_container : R.id.frame_detail_recipe;
-
-            // Compare the Id of the container's fragment with the id of the new container's id
-            // If the new container's id != the old then we have to remove the fragment from his old container
-            Fragment fragment = getSupportFragmentManager().findFragmentById(destinationContainerId);
-            if (fragment != null) {
-                if (fragment.getId() != mStepDetailFragment.getId()) {
-                    getSupportFragmentManager().popBackStackImmediate(StepAdapter.BACKSTACK, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    getSupportFragmentManager().beginTransaction().remove(mStepDetailFragment).commit();
-                    getSupportFragmentManager().executePendingTransactions();
-                }
-            } else {
-                if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-                    getSupportFragmentManager().popBackStackImmediate(StepAdapter.BACKSTACK, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                }
-                getSupportFragmentManager().beginTransaction().remove(mStepDetailFragment).commit();
-                getSupportFragmentManager().executePendingTransactions();
-            }
-
-            // Create fragment transaction but not commited yet
             if (mTwoPane) {
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.frame_step_container, mStepDetailFragment, TAG_STEP_DETAIL_FRAGMENT)

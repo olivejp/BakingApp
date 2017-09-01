@@ -168,6 +168,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         super.onCreate(savedInstanceState);
         readBundle(getArguments());
         initializeMediaSession();
+        setRetainInstance(true);
     }
 
     @Override
@@ -309,7 +310,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     @Override
     public void onDestroy() {
         super.onDestroy();
-        releasePlayerAndMediaSession();
     }
 
     @Override
