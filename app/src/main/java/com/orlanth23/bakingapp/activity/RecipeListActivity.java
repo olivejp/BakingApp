@@ -15,14 +15,13 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.orlanth23.bakingapp.Constants;
-import com.orlanth23.bakingapp.idlingResource.SimpleIdlingResource;
 import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.adapter.RecipeAdapter;
 import com.orlanth23.bakingapp.broadcast.NetworkReceiver;
 import com.orlanth23.bakingapp.domain.Recipe;
+import com.orlanth23.bakingapp.idlingResource.SimpleIdlingResource;
 import com.orlanth23.bakingapp.provider.ProviderUtilities;
 import com.orlanth23.bakingapp.task.GetRecipesFromNetwork;
 import com.orlanth23.bakingapp.task.RecipeListTaskListener;
@@ -99,7 +98,7 @@ public class RecipeListActivity extends AppCompatActivity implements NetworkRece
             if (mNetworkReceiver.checkConnection(this)) {
                 getRecipeListFromTheNet();
             } else {
-                Toast.makeText(this, R.string.no_connection_to_get_recipe_list, Toast.LENGTH_LONG).show();
+                Snackbar.make(mRecyclerView, R.string.no_connection_to_get_recipe_list, Snackbar.LENGTH_LONG).show();
             }
         }
 

@@ -17,6 +17,8 @@
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
         android:paddingEnd="20dp"
         android:paddingRight="20dp"
+        android:paddingLeft="0dp"
+        android:paddingStart="0dp"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"/>
 
 </RelativeLayout>
