@@ -178,7 +178,9 @@ public class RecipeDetailActivity extends AppCompatActivity implements  RecipeDe
                     getSupportFragmentManager().executePendingTransactions();
                 }
             } else {
-                getSupportFragmentManager().popBackStackImmediate(StepAdapter.BACKSTACK, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                    getSupportFragmentManager().popBackStackImmediate(StepAdapter.BACKSTACK, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                }
                 getSupportFragmentManager().beginTransaction().remove(mStepDetailFragment).commit();
                 getSupportFragmentManager().executePendingTransactions();
             }

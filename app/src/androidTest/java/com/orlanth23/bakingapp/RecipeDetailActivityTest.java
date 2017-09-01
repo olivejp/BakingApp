@@ -9,6 +9,7 @@ import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orlanth23.bakingapp.activity.RecipeDetailActivity;
@@ -26,11 +27,12 @@ import java.util.ArrayList;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeUp;
-import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.instanceOf;
 
 /**
  * Created by orlanth23 on 17/07/2017.
@@ -93,7 +95,7 @@ public class RecipeDetailActivityTest {
                 // we check that the step description is displayed (only available on tablet)
                 onView(withId(R.id.step_description)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
             } else {
-                onView(withId(R.id.player_view)).check(matches(isDisplayed()));
+                onView(allOf(instanceOf(SimpleExoPlayerView.class), withId(R.id.player_view))).check(matches(isDisplayed()));
             }
         } else {
             onView(withId(R.id.step_description)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
@@ -137,7 +139,7 @@ public class RecipeDetailActivityTest {
             recipeDetailActivityTestRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
             // we check that the player is displayed
-            onView(withId(R.id.player_view)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
+            onView(allOf(instanceOf(SimpleExoPlayerView.class), withId(R.id.player_view))).check(matches(isDisplayed()));
         } else {
             Assert.assertTrue(true);
         }
