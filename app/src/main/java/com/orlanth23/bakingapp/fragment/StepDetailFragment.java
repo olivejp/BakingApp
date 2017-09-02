@@ -146,16 +146,27 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     @Override
     public void OnNetworkEnable() {
         mIsConnected = true;
-        if (mPlayerView != null) {
-//            initializeViews();
+        if (!TextUtils.isEmpty(mStep.getVideoURL()) && mPlayerView.getVisibility() == View.GONE) {
+            mPlayerView.setVisibility(View.VISIBLE);
+            initializePlayer();
+
+            // Set the video to load
+            loadMedia(Uri.parse(mStep.getVideoURL()));
+
+            // Change the current position
+            if (mPositionPlayer != C.TIME_UNSET) {
+                mExoPlayer.seekTo(mPositionPlayer);
+            }
         }
     }
 
     @Override
     public void OnNetworkDisable() {
         mIsConnected = false;
-        if (mPlayerView != null) {
-//            initializeViews();
+        if (mPlayerView.getVisibility() == View.VISIBLE) {
+            mPlayerView.setVisibility(View.GONE);
+            releaseNotification();
+            releasePlayer();
         }
     }
 
@@ -222,10 +233,10 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
                     mExoPlayer.seekTo(mPositionPlayer);
                 }
             } else {
-                releasePlayerAndMediaSession();
+                releaseNotificationPlayerMediaSession();
             }
         } else {
-            releasePlayerAndMediaSession();
+            releaseNotificationPlayerMediaSession();
         }
 
         // We always put the step description
@@ -296,10 +307,13 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         mNotificationManager.notify(0, builder.build());
     }
 
-    private void releasePlayerAndMediaSession() {
+    private void releaseNotification(){
         if (mNotificationManager != null) {
             mNotificationManager.cancelAll();
         }
+    }
+
+    private void releasePlayer(){
         if (mExoPlayer != null) {
             mPositionPlayer = mExoPlayer.getCurrentPosition();
             mExoPlayer.stop();
@@ -308,16 +322,25 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         } else {
             mPositionPlayer = C.TIME_UNSET;
         }
+    }
+
+    private void releaseMediaSession(){
         if (sMediaSession != null) {
             sMediaSession.setActive(false);
             sMediaSession.release();
         }
     }
 
+    private void releaseNotificationPlayerMediaSession() {
+        releaseNotification();
+        releasePlayer();
+        releaseMediaSession();
+    }
+
     @Override
     public void onPause() {
         super.onPause();
-        releasePlayerAndMediaSession();
+        releaseNotificationPlayerMediaSession();
     }
 
     @Override
