@@ -6,7 +6,7 @@ This list is save on a content provider.
 If you're online you can watch videos for the most importants steps of a recipe.
 You can also put a widget on your phone screen to get the list of ingredients of your favorite recipe.
 
-[![Build Status](https://travis-ci.org/olivejp/PopularMovie.svg?branch=master)](https://travis-ci.org/olivejp/PopularMovie)
+[![Build Status](https://travis-ci.org/olivejp/BakingApp.svg?branch=master)](https://travis-ci.org/olivejp/BakingApp)
 
 Install
 -------
