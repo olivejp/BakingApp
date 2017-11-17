@@ -1,5 +1,6 @@
 package com.orlanth23.bakingapp.fragment;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -12,10 +13,11 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.support.v7.app.NotificationCompat;
+
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -43,6 +45,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.orlanth23.bakingapp.Constants;
 import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.activity.RecipeListActivity;
 import com.orlanth23.bakingapp.broadcast.NetworkReceiver;
@@ -271,7 +274,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     }
 
     private void showNotification(PlaybackStateCompat state) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity());
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity(), Constants.BAKING_APP_CHANNEL_ID);
 
         int icon;
         String play_pause;
@@ -298,7 +301,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
                 .setSmallIcon(R.mipmap.ic_baking_app)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .addAction(playPauseAction)
-                .setStyle(new NotificationCompat.MediaStyle()
+                .setStyle(new android.support.v4.media.app.NotificationCompat.MediaStyle()
                         .setMediaSession(sMediaSession.getSessionToken())
                         .setShowActionsInCompactView(0));
 

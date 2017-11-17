@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.activity.RecipeDetailActivity;
 import com.orlanth23.bakingapp.domain.Recipe;
@@ -52,7 +53,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
             holder.mRecipeImage.setVisibility(View.VISIBLE);
             Glide.with(mActivity)
                     .load(holder.mRecipe.getImage())
-                    .centerCrop()
+                    .apply(RequestOptions.circleCropTransform())
                     .into(holder.mRecipeImage);
         } else {
             holder.mRecipeImage.setVisibility(View.GONE);

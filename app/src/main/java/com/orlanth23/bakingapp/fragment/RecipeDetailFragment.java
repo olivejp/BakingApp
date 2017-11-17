@@ -2,6 +2,7 @@ package com.orlanth23.bakingapp.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.adapter.IngredientAdapter;
 import com.orlanth23.bakingapp.adapter.StepAdapter;
@@ -79,7 +81,7 @@ public class RecipeDetailFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
 
@@ -94,7 +96,7 @@ public class RecipeDetailFragment extends Fragment {
             mImageRecipe.setVisibility(View.VISIBLE);
             Glide.with(mActivity)
                     .load(mRecipe.getImage())
-                    .centerCrop()
+                    .apply(RequestOptions.circleCropTransform())
                     .into(mImageRecipe);
         } else {
             mImageRecipe.setVisibility(View.GONE);

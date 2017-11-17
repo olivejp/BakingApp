@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.orlanth23.bakingapp.R;
 import com.orlanth23.bakingapp.activity.RecipeDetailActivity;
 import com.orlanth23.bakingapp.domain.Recipe;
@@ -64,10 +65,14 @@ public class StepAdapter
         holder.mStep = mRecipe.getSteps().get(stepIndex);
         holder.mShortDescriptionView.setText(holder.mStep.getShortDescription());
 
+        RequestOptions options = new RequestOptions()
+                .centerCrop()
+                .error(mBitmapDrawable);
+
         // Load the thumbnail
         Glide.with(mAppCompatActivity)
                 .load(holder.mStep.getThumbnailURL())
-                .error(mBitmapDrawable)
+                .apply(options)
                 .into(holder.mThumbnail);
 
         // Click depends on the device's screen
